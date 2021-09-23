@@ -1,4 +1,5 @@
 %{
+/*Espaço para declarações e includes do que sera usado em C*/
  #include <string>
  #include <stdio.h>
 
@@ -7,8 +8,8 @@
 //equivale aos defines usados na versão em C
  enum TOKEN {ID = 256, NUM, FOR, MAIOR_IGUAL}; /*nao eh necessario definir codigo para todos, apenas o de inicio, 256 no caso*/
 %}
+/*Espaço para deifnições regulares*/
 
-/*Declarações*/
  //Substitui tudo aquilo q foi feito manualmente em C por regex,
  //essa parte equivale aos ifs de verificação 
 
