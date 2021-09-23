@@ -1,5 +1,6 @@
 %{
  #include <string>
+ #include <stdio.h>
 
  using namespace std;
 
@@ -39,12 +40,12 @@ IDENTIFICADOR {LETRA}+({LETRA}|{DIGITO})*
 {WS}    {  }
 {NUM}   {return NUM;}
 
- //equivale ao switch case que usamos anteriormente
+ /*equivale ao switch case que usamos anteriormente*/
 "for"   {return FOR;}
 "+"     {return '+';}
 ">="    {return MAIOR_IGUAL;}
 
-{ID}    {return ID;}
+{IDENTIFICADOR}    {return ID;}
 
 .       {return yytext[0];} /*equivale ao default, retorna um caracter por vez*/
 
