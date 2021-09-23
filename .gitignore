@@ -1,0 +1,2 @@
+#ignore lex compile
+**/*lex.yy.c
