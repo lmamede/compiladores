@@ -15,6 +15,17 @@ string lexema;
 vector<string> pilha;
 map<string, double> variaveis;
 
+void print();
+void Max2();
+
+
+typedef void (*Funcao)();
+
+map<string,Funcao> funcao = {
+  { "print", &print },
+  { "max", &Max2 }
+};
+
 void push(double valor){
     pilha.push_back(to_string(valor));
 }
@@ -36,6 +47,18 @@ double pop_double(){
     return temp;
 }
 
+void print() {
+  cout << pop_double() << " ";
+}
+
+void Max2() {
+  double b = pop_double();
+  double a = pop_double();
+  
+  push( a > b ? a : b );
+}
+
+
 
 int next_token(){
     static int look_ahead = ' ';
@@ -56,6 +79,12 @@ int next_token(){
         lexema = (char) look_ahead;
 
         look_ahead = getchar();
+
+         while( isalpha( look_ahead ) ) {
+            lexema += (char) look_ahead;    
+            look_ahead = getchar();   
+        }
+
         return ID;
     }
 
@@ -66,9 +95,10 @@ int next_token(){
         case '/':
         case '=':
         case '@':
-        int temp = look_ahead;
-        look_ahead = getchar();
-        return temp;
+        case '#':
+            int temp = look_ahead;
+            look_ahead = getchar();
+            return temp;
     }
   
     return EOF;    
@@ -129,6 +159,18 @@ int main() {
                 
                 push( op1 * op2 ); 
                 break;
+
+            case '#': {
+                string temp = pop_string();
+                Funcao f = funcao[temp];
+            
+                if( f == nullptr ) {
+                    cout << "Funcao não definida: " << temp << endl;
+                    exit( 1 );
+                }
+            
+                f();
+            }
         }
         
         token = next_token();
