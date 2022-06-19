@@ -1,0 +1,143 @@
+{ 
+    "cenarios": [
+        {
+            "nome": "Teste ID",
+            "token":"256",
+            "casos":{
+                "a":"a",
+                "b_1": "b_1",
+                "ab1":"ab1",
+                "\\$tab":"$tab",
+                "_5" : "_5",
+                "\\$o" : "$o",
+                "\\$" : "$",
+                "_" : "_"
+            }
+        },
+
+        {
+            "nome": "Testes INT",
+            "token":"259",
+            "casos":{
+                "1":"1",
+                "221":"221",
+                "0":"0"
+            }
+        },
+
+        {
+            "nome": "Testes Float",
+            "token":"260",
+            "casos":{
+                "0.1":"0.1",
+                "1.028": "1.028",
+                "2.000001": "2.000001", 
+                "1.2E-4": "1.2E-4",
+                "11.2E+4": "11.2E+4",
+                "10e-9": "10e-9", 
+                "10.34e+9":"10.34e+9", 
+                "0.4e31": "0.4e31"
+            }
+        },
+
+        {
+            "nome": "Testes For",
+            "token":"257",
+            "casos":{
+                "FOR":"FOR",
+                "for":"for",
+                "fOr":"fOr"
+            }
+        },
+
+        {
+            "nome": "Testes If",
+            "token":"258",
+            "casos":{
+                "IF":"IF",
+                "if":"if",
+                "If":"If"
+            }
+        },
+
+        {
+            "nome":"Testes Maig",
+            "token":"261",
+            "casos":{
+                ">=" : ">="
+            }
+        },
+
+        {
+            "nome":"Testes Meig",
+            "token":"262",
+            "casos":{
+                "<=" : "<="
+            }
+        },
+
+        {
+            "nome":"Testes Igual",
+            "token":"263",
+            "casos":{
+                "==" : "=="
+            }
+        },
+
+        {
+            "nome":"Testes Dif",
+            "token":"264",
+            "casos":{
+                "!=" : "!="
+            }
+        },
+
+        {
+            "nome":"Testes Comentario",
+            "token":"267",
+            "casos":{
+                "/*Um comentario*/" : "/*Um comentario*/",
+                "/* Um comentario */ /* Outro \ncomentario */" : "/* Um comentario */\n267 /* Outro \ncomentario */",
+                "// Comentario ate o final da linha":"// Comentario ate o final da linha",
+                "// /*Esse comentario anula o inicio":"// /*Esse comentario anula o inicio",
+                "/* Esse comentario foi terminado! // */": "/* Esse comentario foi terminado! // */"
+
+            }
+        },
+
+        {
+            "nome":"Testes String",
+            "token":"265",
+            "casos":{
+                "\\\"hello\\\"":"\"hello\"",
+                "\\\"hello, world\\\"" : "\"hello, world\"",
+                "'hello, world'" : "'hello, world'",
+                "\\\"Aspas internas com \\\\\\\" \\\"": "\"Aspas internas com \\\" \"",
+                "\\\"ou com \\\"\\\"\\\"":"\"ou com \"\"\"",
+                "'d''agua'":"'d''agua'",    
+                "\\\"d'agua\\\"":"\"d'agua\"",
+                "'d\\'agua' ":"'d\\'agua'"
+            }
+        },
+
+        {
+            "nome":"Testes String2",
+            "token":"266",
+            "casos":{
+                "\\`hello, world\\`" : "`hello, world`",
+                "\\`hello,\nworld\\`" : "`hello,\nworld`" 
+            }
+        }
+
+    ]
+}
+
+
+
+
+
+
+
+
+
+

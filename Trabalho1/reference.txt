@@ -1,0 +1,11 @@
+[0-9] colchetes implica em classe de caracteres, sinais de + e - sao reservados
+[A-Za-z] cada expressao tem implicitamente um OU
+*   implica em repetição daquela classe 0 ou mais vezes
++   implica em repetição daquela classe 1 ou mais vezes
+{ } é usado para referenciar outra declaracao
+.   eh um caracter reservado, definido como qlqr caracter exceto \n
+^   vc usa para fazer o complemento, ou seja, a negacao de uma classe ou para dar match no inicio
+?   especifica que aquela classe eh opcional
+-   usado para expressar intervalos
+\   usado como escape
+$   usado para dar match apenas no final da frase

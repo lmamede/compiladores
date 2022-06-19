@@ -1,2 +1,8 @@
 #ignore lex compile
 **/*lex.yy.c
+
+#ignore vscode config
+.vscode/
+
+#ignore python config
+**/*.pyc
