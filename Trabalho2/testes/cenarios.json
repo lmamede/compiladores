@@ -1,0 +1,175 @@
+{ 
+    "testes":[
+        {
+            "nome":"Teste 1: print expressão numérica",
+            "arquivo_input":"testes/Teste1.txt",
+            "arquivo_output":"testes/Teste1-out.txt"
+        },
+        {
+            "nome":"Test 2: print expressão com string",
+            "arquivo_input":"testes/Teste2.txt",
+            "arquivo_output":"testes/Teste2-out.txt"
+        },
+        {
+            "nome":"Test 3: atribuição com texto",
+            "arquivo_input":"testes/Teste3.txt",
+            "arquivo_output":"testes/Teste3-out.txt"
+        },
+        {
+            "nome":"Test 4: atribuição com expressões numéricas",
+            "arquivo_input":"testes/Teste4.txt",
+            "arquivo_output":"testes/Teste4-out.txt"
+        },
+        {
+            "nome":"Test 5: atribuição com expressões numéricas e textuais",
+            "arquivo_input":"testes/Teste5.txt",
+            "arquivo_output":"testes/Teste5-out.txt"
+        },
+        {
+            "nome":"Test 6: identificadores estranhos",
+            "arquivo_input":"testes/Teste6.txt",
+            "arquivo_output":"testes/Teste6-out.txt"
+        },
+        {
+            "nome":"Test 7: função max",
+            "arquivo_input":"testes/Teste7.txt",
+            "arquivo_output":"testes/Teste7-out.txt"
+        },
+        {
+            "nome":"Test 8: Fatorial",
+            "arquivo_input":"testes/Teste8.txt",
+            "arquivo_output":"testes/Teste8-out.txt"
+        },
+        {
+            "nome":"Test 9: Exponenciação",
+            "arquivo_input":"testes/Teste9.txt",
+            "arquivo_output":"testes/Teste9-out.txt"
+        },
+        {
+            "nome":"Test 10: Operador unário encadeado",
+            "arquivo_input":"testes/Teste10.txt",
+            "arquivo_output":"testes/Teste10-out.txt"
+        },
+        {
+            "nome":"Test 11: função dtos",
+            "arquivo_input":"testes/Teste11.txt",
+            "arquivo_output":"testes/Teste11-out.txt"
+        },
+        {
+            "nome":"Test 12: erro ao somar número com string",
+            "arquivo_input":"testes/Teste12.txt",
+            "arquivo_output":"testes/Teste12-out.txt"
+        },
+        {
+            "nome":"Test 13: erro ao usar função não definida",
+            "arquivo_input":"testes/Teste13.txt",
+            "arquivo_output":"testes/Teste13-out.txt"
+        },
+        {
+            "nome":"Test 14: Fatorial inexistente",
+            "arquivo_input":"testes/Teste14.txt",
+            "arquivo_output":"testes/Teste14-out.txt"
+        },
+        {
+            "nome":"Test 15: Exponencial inexistente",
+            "arquivo_input":"testes/Teste15.txt",
+            "arquivo_output":"testes/Teste15-out.txt"
+        }
+        
+    ],
+    "cenarios": [
+        {
+            "nome": "Teste de Atribuicao",
+            "casos":{
+                "a":"a ",
+                "a = \\\"hello\\\";":"a \"hello\" =",
+                "b = a + \\\" world\\\" + \\\"!\\\";":"b a @ \" world\" + \"!\" + =",
+                "print b;" : "b @ print #",
+                "print - 2 + 3*4.1;":"0 2 - 3 4.1 * + print #"
+            }
+        },
+        {
+            "nome": "Teste de Atribuicao",
+            "casos":{
+                "a":"a ",
+                "a = \\\"hello\\\";":"a \"hello\" =",
+                "b = a + \\\" world\\\" + \\\"!\\\";":"b a @ \" world\" + \"!\" + =",
+                "print b;" : "b @ print #",
+                "print - 2 + 3*4.1;":"0 2 - 3 4.1 * + print #"
+            }
+        },
+        {
+            "nome": "Teste 2: print expressão com string",
+            "casos":{
+                "print \\\"\\\"\\\" hello,\\\" + \\\"world\\\" + \\\"\\!\\\\\\\"\\\";": "\"\"\"hello, \" \"world\" + \"!\"\" + print #"
+                
+            }
+        },
+        {
+            "nome": "Teste 3: atribuicao com texto",
+            "casos":{
+                "a = \\\"hello, \\\";\nb = a + \\\"world\\\" + \\\"!\\\";\nprint b;":"a \"hello, \" = b a @ \"world\" + \"!\" + = b @ print #"
+                
+            }
+        },
+        {
+            "nome": "Teste 4",
+            "casos":{
+                "a = 3.1 * 4 - 0.1;\nb = (a - 1)*(a + 1);\nprint -b;":"a 3.1 4 * 0.1 - = b a @ 1 - a @ 1 + * = 0 b @ - print #"
+            }
+        },
+        {
+            "nome": "Teste 5",
+            "casos":{
+                "aba = \\\"aba\\\";":"aba \"aba\" =",
+                "cate = \\\"cate\\\";":"cate \"cate\" ="
+            }
+        },
+        {
+            "nome": "Teste 6",
+            "casos":{
+                "a = \\\"hello, \\\";\nb = a + \\\"world\\\" + \\\"!\\\";\nprint b;":"a \"hello, \" = b a @ \"world\" + \"!\" + = b @ print #"
+                
+            }
+        },
+        {
+            "nome": "Teste 7",
+            "casos":{
+                "a = \\\"hello, \\\";\nb = a + \\\"world\\\" + \\\"!\\\";\nprint b;":"a \"hello, \" = b a @ \"world\" + \"!\" + = b @ print #"
+                
+            }
+        },
+        {
+            "nome": "Teste 8",
+            "casos":{
+                "a = \\\"hello, \\\";\nb = a + \\\"world\\\" + \\\"!\\\";\nprint b;":"a \"hello, \" = b a @ \"world\" + \"!\" + = b @ print #"
+                
+            }
+        },
+        {
+            "nome": "Teste 9",
+            "casos":{
+                "a = \\\"hello, \\\";\nb = a + \\\"world\\\" + \\\"!\\\";\nprint b;":"a \"hello, \" = b a @ \"world\" + \"!\" + = b @ print #"
+                
+            }
+        },
+        {
+            "nome": "Teste 10",
+            "casos":{
+                "a = \\\"hello, \\\";\nb = a + \\\"world\\\" + \\\"!\\\";\nprint b;":"a \"hello, \" = b a @ \"world\" + \"!\" + = b @ print #"
+                
+            }
+        }                    
+
+    ]
+}
+
+
+
+
+
+
+
+
+
+

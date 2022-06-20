@@ -1,0 +1,1 @@
+a 0 8 fat # - = b 2 2 * 1 + fat # 3 fat # / = b @ fat # 0 a @ 2 ^ - / print #
