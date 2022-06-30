@@ -1,10 +1,11 @@
+all: miniJS 
+	./miniJS < testes/entradas.txt
 
-all: lex.yy.mdp.o var_object.cc mdp.h mdp.cc
-	 g++ -Wall -std=c++17 lex.yy.mdp.o mdp.cc -lfl -o interpretador 
-		
-lex.yy.mdp.o: lex.yy.mdp.c 
-	g++ -Wall -std=c++14 -c lex.yy.mdp.c 
-	
-lex.yy.mdp.c: mdp.l 
-	lex -o lex.yy.mdp.c mdp.l 
-	
+lex.yy.c: miniJS.l
+	lex miniJS.l
+
+y.tab.c: miniJS.y
+	yacc miniJS.y
+
+miniJS: lex.yy.c y.tab.c
+	g++ -o miniJS y.tab.c -lfl
