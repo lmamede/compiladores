@@ -88,6 +88,15 @@ void primeiro_membro(int token_esperado){
   casa(token_esperado);
 }
 
+void argumentos(){
+  expressao();
+  if(token == ','){
+      casa(',');
+      cout << " ";
+      expressao();
+    }
+}
+
 void avaliar_depois_id(string id){
   if(token == '='){
     cout << id << " ";
@@ -96,18 +105,11 @@ void avaliar_depois_id(string id){
     cout << " =";
   }else if(token == '('){
     casa('(');
-    expressao();
-    if(token == ','){
-      casa(',');
-      cout << " ";
-      expressao();
-    } 
+    argumentos(); 
     casa(')');
     cout << " " << id << " #";
-  }else if(token != '='){
-    cout << id <<" @";
   }else{
-    cout << id;
+    cout << id <<" @";
   }
 }
 
