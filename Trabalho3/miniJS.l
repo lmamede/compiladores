@@ -29,26 +29,26 @@ STRING2       [`]({WS}|.)*[`]
 %%
 
 {WS}      {  }
-{INT}     {return _INT;}
-{FLOAT}   {return _FLOAT;}
+{INT}     {return recuperarValor(_INT);}
+{FLOAT}   {return recuperarValor(_FLOAT);}
 
-{FOR}   {return _FOR;}
-{IF}    {return _IF;}
-"print" {return _PRINT;}
+{FOR}   {return recuperarValor(_FOR);}
+{IF}    {return recuperarValor(_IF);}
+"print" {return recuperarValor(_PRINT);}
 
-"+"     {return '+';}
-">="    {return _MAIG;}
-"<="    {return _MEIG;}
-"=="    {return _IG;}
-"!="    {return _DIF;}
+"+"     {return recuperarValor('+');}
+">="    {return recuperarValor(_MAIG);}
+"<="    {return recuperarValor(_MEIG);}
+"=="    {return recuperarValor(_IG);}
+"!="    {return recuperarValor(_DIF);}
 
-{IDENTIFICADOR}     {return _ID;}
-{COMENTARIO2}       {return _COMENTARIO;}
-{COMENTARIO1}       {return _COMENTARIO;}
-{STRING}            {return _STRING;}
-{STRING1}           {return _STRING;}
-{STRING2}           {return _STRING2;}
+{IDENTIFICADOR}     {return recuperarValor(_ID);}
+{COMENTARIO2}       {return recuperarValor(_COMENTARIO);}
+{COMENTARIO1}       {return recuperarValor(_COMENTARIO);}
+{STRING}            {return recuperarValor(_STRING);}
+{STRING1}           {return recuperarValor(_STRING);}
+{STRING2}           {return recuperarValor(_STRING2);}
 
-.       {return yytext[0];}
+.       {return recuperarValor(yytext[0]);}
 
 %%

@@ -7,12 +7,14 @@
 using namespace std;
 
 struct Atributos {
-  string teste;
+  string valor;
 
 };
 
 #define YYSTYPE Atributos
 
+int recuperarValor(int tk);
+void mostrar(string valor);
 extern "C" int yylex();  
 int yyparse();
 void yyerror(const char *);
@@ -25,40 +27,72 @@ void yyerror(const char *);
 
 %%
 
-Operador_Menos_Prioritario  :   '-' {cout << "1- ";}
-                            |   '+' {cout << "2+ ";} 
-                            ;
-
-Operador_Prioritario    :   '*' {cout << "* ";}
-                        |   '/' {cout << "/ ";}
-                        |   '^' {cout << "^ ";} 
-                        |   '!' {cout << "! ";}  
-                        ;
-
-
-Membro  :   _STRING {cout << "string ";}
-        |   _INT    {cout << "int ";}
-        |   _FLOAT  {cout << "float ";}
-        |   _ID     {cout << "id ";}
-        |   _PRINT  {cout << "print ";}
-        |   '+'     {cout << "+ ";}
-        |   '-'     {cout << "- ";}
-        |   '('     {cout << "( ";}
-        ;
-
-Termo   :   Membro {cout << "termo ";}
-        |   Operador_Prioritario;
-        ;
-
-Expressao   :   Termo   {cout << "expressao ";}
-            |   Operador_Menos_Prioritario 
+Argumentos  : Expressao               {$$.valor = $1.valor;}
+            | Expressao ',' Expressao {$$.valor = $1.valor + " " + $3.valor;}
+            |                         {$$.valor = "";}
             ;
 
-Entrada  :  Expressao ';' {cout << "Entrada ";}
-         ;
+Avaliar_ID  :   '=' Expressao       {$$.valor = $2.valor + " =";}
+            |                       {$$.valor = "@";}
+            ;
+
+Conta_Simples :   '-' Termo Conta_Simples {$$.valor = " " + $2.valor + " -" + $3.valor;} 
+              |   '+' Termo Conta_Simples {$$.valor = " " + $2.valor + " +" + $3.valor;} 
+              |                           {$$.valor = "";}
+              ;
+
+Conta_Complexa2   :   '^' Termo {$$.valor = " " + $2.valor + " ^";} 
+                  |   '!' Termo {$$.valor = " fat #" + $2.valor;}
+                  |             {$$.valor = "";}  
+                  ;
+
+Conta_Complexa    :   '*' Membro Conta_Complexa2 Conta_Complexa {$$.valor = " " + $2.valor + $3.valor + " *" + $4.valor;}
+                  |   '/' Termo {$$.valor = " " + $2.valor + " /";}
+                  |   '^' Termo {$$.valor = " " + $2.valor + " ^";} 
+                  |   '!' Termo {$$.valor = " fat #" + $2.valor;}
+                  |             {$$.valor = "";}
+                  ;
+
+Funcao  : _ID '(' Argumentos ')' {$$.valor = $3.valor + " " + $1.valor + " #";}
+        ;
+
+Membro  :   _STRING               {$$.valor = $1.valor;}
+        |   _INT                  {$$.valor = $1.valor;}
+        |   _FLOAT                {$$.valor = $1.valor;}
+        |   Funcao                {$$.valor = $1.valor;}
+        |   _ID     Avaliar_ID    {$$.valor = $1.valor + " " + $2.valor;}
+        |   _PRINT  Expressao     {$$.valor = $2.valor + " print #";}
+        |   '+'     Expressao     {$$.valor = $2.valor;}
+        |   '-'     Termo         {$$.valor = "0 " + $2.valor + " -";}  
+        |   '('     Expressao ')' {$$.valor = $2.valor;}
+        |                         {$$.valor = "";}
+        ;
+
+Termo :   Membro Conta_Complexa {$$.valor = $1.valor + $2.valor;}
+      ;
+
+Expressao :   Termo Conta_Simples {$$.valor = $1.valor + $2.valor;}   
+          ;
+
+Continuacao : Expressao ';' Continuacao {$$.valor = " " + $1.valor + $3.valor;}
+            |                           {$$.valor = "";}
+            ;
+
+Entrada  :  Expressao ';' Continuacao {mostrar($1.valor + $3.valor);}
+         ;  
 %%
 
 #include "lex.yy.c"
+
+void mostrar(string valor){
+    cout << valor;
+}
+
+int recuperarValor( int tk ) {  
+  yylval.valor = yytext; 
+
+  return tk;
+}
 
 void yyerror( const char* st ) {
    puts( st ); 

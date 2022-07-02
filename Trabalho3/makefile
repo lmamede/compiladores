@@ -1,5 +1,5 @@
 all: miniJS 
-	./miniJS < testes/entradas.txt
+	python3 testes/teste.py
 
 lex.yy.c: miniJS.l
 	lex miniJS.l
