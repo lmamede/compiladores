@@ -36,7 +36,12 @@ STRING2       [`]({WS}|.)*[`]
 {IF}    {return recuperarValor(_IF);}
 "print" {return recuperarValor(_PRINT);}
 
+"let"    {return recuperarValor(_LET);}
+"const"  {return recuperarValor(_CONST);}
+"var"    {return recuperarValor(_VAR);}
+
 "+"     {return recuperarValor('+');}
+"+"/"=" {return recuperarValor(_CONC);}
 ">="    {return recuperarValor(_MAIG);}
 "<="    {return recuperarValor(_MEIG);}
 "=="    {return recuperarValor(_IG);}

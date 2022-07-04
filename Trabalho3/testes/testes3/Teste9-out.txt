@@ -1,0 +1,6 @@
+Erro: a variável 'b' não foi declarada.
+=== Console ===
+=== Vars ===
+|{ }|
+=== Pilha ===
+

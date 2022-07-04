@@ -1,0 +1,5 @@
+=== Console ===
+=== Vars ===
+|{ i: -1; obj: { nome: Manoel!; nums: [ 0: 12; 1: 45; 2: undefined; 3: 13; ]; }; }|
+=== Pilha ===
+

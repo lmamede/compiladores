@@ -69,6 +69,5 @@ def main():
 
     for teste in cenarios["testes"]:
         testar_single_input(teste["arquivo_input"], teste["arquivo_output"],teste["nome"])
-        #testar_single_input(teste["casos"], teste["nome"])
     
 main()

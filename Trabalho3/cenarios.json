@@ -1,0 +1,104 @@
+{
+    "testes": [
+        {
+            "nome": "Test 1: #1 Declaração de variáveis",
+            "arquivo_input": "./testes/testes3/Teste1.txt",
+            "arquivo_output": "./testes/testes3/Teste1-out.txt"
+        },
+        {
+            "nome": "Test 2: #2 Atribuição e contas",
+            "arquivo_input": "./testes/testes3/Teste2.txt",
+            "arquivo_output": "./testes/testes3/Teste2-out.txt"
+        },
+        {
+            "nome": "Test 3: #3 if sem else",
+            "arquivo_input": "./testes/testes3/Teste3.txt",
+            "arquivo_output": "./testes/testes3/Teste3-out.txt"
+        },
+        {
+            "nome": "Test 4: #4 if com else",
+            "arquivo_input": "./testes/testes3/Teste4.txt",
+            "arquivo_output": "./testes/testes3/Teste4-out.txt"
+        },
+        {
+            "nome": "Test 5: #5 Objetos e arrays",
+            "arquivo_input": "./testes/testes3/Teste5.txt",
+            "arquivo_output": "./testes/testes3/Teste5-out.txt"
+        },
+        {
+            "nome": "Test 6: #6 while",
+            "arquivo_input": "./testes/testes3/Teste6.txt",
+            "arquivo_output": "./testes/testes3/Teste6-out.txt"
+        },
+        {
+            "nome": "Test 7: #7 for",
+            "arquivo_input": "./testes/testes3/Teste7.txt",
+            "arquivo_output": "./testes/testes3/Teste7-out.txt"
+        },
+        {
+            "nome": "Test 8: #8 multiplicação de matrizes",
+            "arquivo_input": "./testes/testes3/Teste8.txt",
+            "arquivo_output": "./testes/testes3/Teste8-out.txt"
+        },
+        {
+            "nome": "Test 9: #9 Variável não declarada",
+            "arquivo_input": "./testes/testes3/Teste9.txt",
+            "arquivo_output": "./testes/testes3/Teste9-out.txt"
+        },
+        {
+            "nome": "Test 10: #10 Declaração duplicada da mesma variável",
+            "arquivo_input": "./testes/testes3/Teste10.txt",
+            "arquivo_output": "./testes/testes3/Teste10-out.txt"
+        },
+        {
+            "nome": "Test 1: #1 Declaração de variáveis",
+            "arquivo_input": "./testes/testes3/Teste1.txt",
+            "arquivo_output": "./testes/testes3/Teste1-out.txt"
+        },
+        {
+            "nome": "Test 2: #2 Atribuição e contas",
+            "arquivo_input": "./testes/testes3/Teste2.txt",
+            "arquivo_output": "./testes/testes3/Teste2-out.txt"
+        },
+        {
+            "nome": "Test 3: #3 if sem else",
+            "arquivo_input": "./testes/testes3/Teste3.txt",
+            "arquivo_output": "./testes/testes3/Teste3-out.txt"
+        },
+        {
+            "nome": "Test 4: #4 if com else",
+            "arquivo_input": "./testes/testes3/Teste4.txt",
+            "arquivo_output": "./testes/testes3/Teste4-out.txt"
+        },
+        {
+            "nome": "Test 5: #5 Objetos e arrays",
+            "arquivo_input": "./testes/testes3/Teste5.txt",
+            "arquivo_output": "./testes/testes3/Teste5-out.txt"
+        },
+        {
+            "nome": "Test 6: #6 while",
+            "arquivo_input": "./testes/testes3/Teste6.txt",
+            "arquivo_output": "./testes/testes3/Teste6-out.txt"
+        },
+        {
+            "nome": "Test 7: #7 for",
+            "arquivo_input": "./testes/testes3/Teste7.txt",
+            "arquivo_output": "./testes/testes3/Teste7-out.txt"
+        },
+        {
+            "nome": "Test 8: #8 multiplicação de matrizes",
+            "arquivo_input": "./testes/testes3/Teste8.txt",
+            "arquivo_output": "./testes/testes3/Teste8-out.txt"
+        },
+        {
+            "nome": "Test 9: #9 Variável não declarada",
+            "arquivo_input": "./testes/testes3/Teste9.txt",
+            "arquivo_output": "./testes/testes3/Teste9-out.txt"
+        },
+        {
+            "nome": "Test 10: #10 Declaração duplicada da mesma variável",
+            "arquivo_input": "./testes/testes3/Teste10.txt",
+            "arquivo_output": "./testes/testes3/Teste10-out.txt"
+        }
+    ]
+}

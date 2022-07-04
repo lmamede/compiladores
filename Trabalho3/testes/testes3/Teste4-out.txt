@@ -1,0 +1,5 @@
+=== Console ===
+=== Vars ===
+|{ a: ABA; c: CATE; resultado: a vem antes de c: ABA<CATE; }|
+=== Pilha ===
+
