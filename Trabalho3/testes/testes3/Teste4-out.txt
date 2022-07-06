@@ -1,5 +1,1 @@
-=== Console ===
-=== Vars ===
-|{ a: ABA; c: CATE; resultado: a vem antes de c: ABA<CATE; }|
-=== Pilha ===
-
+a& a "ABA" = ^ c& c 'CATE' = ^ resultado& a@ c@ == 53 ? a@ c@ < 34 ? resultado "Deu ruim!" = ^ 51 # resultado "a vem antes de c: " = ^ resultado resultado@ a@ '<' + c@ + + = ^ 57 # resultado "Ta' errado!" = ^ .

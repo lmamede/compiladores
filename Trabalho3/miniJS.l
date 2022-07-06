@@ -14,6 +14,8 @@ LINHA   [^\n]*
 
 FOR     [Ff][Oo][Rr]
 
+WHILE   [Ww][Hh][Ii][Ll][Ee]
+
 IF      [Ii][Ff]
 
 ELSE    [Ee][Ll][Ss][Ee]
@@ -37,6 +39,7 @@ STRING2       [`]({WS}|.)*[`]
 {FLOAT}   {return recuperarValor(_FLOAT);}
 
 {FOR}   {return recuperarValor(_FOR);}
+{WHILE} {return recuperarValor(_WHILE);}
 {IF}    {return recuperarValor(_IF);}
 {ELSE}  {return recuperarValor(_ELSE);}
 "print" {return recuperarValor(_PRINT);}

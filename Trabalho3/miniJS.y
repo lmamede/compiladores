@@ -37,7 +37,7 @@ struct Atributos {
 
 %}
 
-%token _ID _FOR _IF _ELSE _INT _FLOAT _MAIG _MEIG _IG _DIF _STRING _STRING2 _COMENTARIO _PRINT _LET _CONST _VAR _CONC _MAISMAIS _NEWOBJECT
+%token _ID _FOR _IF _ELSE _INT _FLOAT _MAIG _MEIG _IG _DIF _STRING _STRING2 _COMENTARIO _PRINT _LET _CONST _VAR _CONC _MAISMAIS _NEWOBJECT _WHILE
 
 %start Entrada
 
@@ -71,9 +71,9 @@ Atribuicao_ID   : '=' Atribuicao_ID2      {$$.valor = $2.valor;}
 
 Conta_Simples :   '-' Termo Conta_Simples               {$$.valor = " " + $2.valor + " -" + $3.valor;} 
               |   '+' Termo Conta_Simples               {$$.valor = " " + $2.valor + " +" + $3.valor;} 
-              |   '>' Termo Conta_Simples               {$$.valor = " " + $2.valor + $3.valor + " > ";}
-              |   '<' Termo Conta_Simples               {$$.valor = " " + $2.valor + $3.valor + " < ";}
-              |   _IG Termo Conta_Simples               {$$.valor = " " + $2.valor + $3.valor + " == ";}
+              |   '>' Termo Conta_Simples               {$$.valor = " " + $2.valor + $3.valor + " >";}
+              |   '<' Termo Conta_Simples               {$$.valor = " " + $2.valor + $3.valor + " <";}
+              |   _IG Termo Conta_Simples               {$$.valor = " " + $2.valor + $3.valor + " ==";}
               |                                         {$$.valor = "";}
               ;
 
@@ -151,25 +151,28 @@ Termo :   Membro  Conta_Complexa  {$$.valor = $1.valor + $2.valor;}
 Conta   :   Termo   Conta_Simples {$$.valor = $1.valor + $2.valor;}          
         ;
 
-Jump    : Expressao Expressao            {count_label++; $$.valor = $2.valor + LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + " " + $1.valor + " " +LABEL_RENDIF + to_string(count_label) + " " + $2.valor;}
-        | '{' Continuacao '}' Expressao  {count_label++; $$.valor = $2.valor +  LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + " " + $2.valor + " " +LABEL_RENDIF + to_string(count_label) + " " + $4.valor;}
-        |                                {$$.valor = "";}
+Jump    : Expressao ';' SENAO            {count_label++; $$.valor = $3.valor + LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + " " + $1.valor + " " + LABEL_RENDIF + to_string(count_label) + " ";}
+        | '{' Continuacao '}' SENAO      {count_label++; $$.valor = $4.valor + LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + " " + $2.valor + LABEL_RENDIF + to_string(count_label) + " ";}
         ;
 
-Comando :  _IF  '(' Expressao ')' Jump {$$.valor = $3.valor + LABEL_IF + to_string(count_label) + " ? " + $5.valor;}
+SENAO   :  _ELSE Continuacao  {$$.valor = $2.valor;}
+        |                     {$$.valor = "";}
+        ;
+
+Comando :  _IF  '(' Expressao ')' Jump {$$.valor = $3.valor + " " + LABEL_IF + to_string(count_label) + " ? " + $5.valor;}
         |  _FOR
         ;
 
 Expressao       :   Declaracao              {$$.valor = $1.valor;}
-                |   Comando                 {$$.valor = $1.valor;}
                 |   Conta   Expressao       {$$.valor = $1.valor + $2.valor;}   
                 ;
 
-Continuacao : Expressao ';' Continuacao {$$.valor = " " + $1.valor + $3.valor;}
-            |                           {$$.valor = "";}
+Continuacao : Expressao ';' Continuacao        {$$.valor = $1.valor + " " + $3.valor;}
+            | Comando       Continuacao        {$$.valor = $1.valor + $2.valor;}
+            |                                  {$$.valor = "";}
             ;
 
-Entrada  :  Expressao ';' Continuacao {mostrar($1.valor + $3.valor + " .");}
+Entrada  :  Continuacao {mostrar($1.valor + ".");}
          ;  
 %%
 
@@ -209,6 +212,7 @@ void mostrar(string valor){
    int pc_nolabel = 0;
    bool palavra = false;
    bool palavra2 = false;
+   bool palavra3 = false;
    bool label = false;
    map<string,int> instPC;
    string label_in_process = "";
@@ -242,8 +246,6 @@ void mostrar(string valor){
                         palavra = true;
                 }else{
                         palavra = false;
-                        tk = printToken(pc_nolabel,tk);
-                        pc_nolabel++;
                 }
                 continue;
         }
@@ -253,9 +255,23 @@ void mostrar(string valor){
                 continue;
         }
 
+        if(valor[pc] == '\''){
+                if(!palavra3 && !palavra){
+                        palavra3 = true;
+                }else{
+                        if(!palavra){
+                                palavra3 = false;
+                        }
+                }
+                continue;
+        }
+
+        
+
         if(valor[pc] == ':'){
                 if(!palavra2){
                         palavra2 = true;
+                        tk += valor[pc];
                 }
 
                 continue;
@@ -274,13 +290,19 @@ void mostrar(string valor){
         }
         
         if(valor[pc] == ' ') {
-                tk = "";
+                tk = printToken(pc_nolabel, tk);
+                pc_nolabel++;
                 continue;
+        }else{
+                if(valor[pc] == '&' || valor[pc] == '@') {
+                        tk = printToken(pc_nolabel, tk);
+                        pc_nolabel++;
+                        tk = valor[pc];
+                        continue;
+                }
         }
 
-        tk = valor[pc];
-        tk = printToken(pc_nolabel, tk);
-        pc_nolabel++;
+        tk += valor[pc];
    }
 
    map<string,int>::iterator it;
@@ -296,7 +318,8 @@ void mostrar(string valor){
 
 void erro( string msg ) {
   cout << "Erro: " << msg << endl;
-  exit(0); 
+  exit(0); //apenas para execucao local
+  //exit(1); 
 }
 
 
