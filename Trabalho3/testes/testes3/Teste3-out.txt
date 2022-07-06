@@ -1,5 +1,1 @@
-=== Console ===
-=== Vars ===
-|{ a: 5; b: 5; c: undefined; d: a e' menor; }|
-=== Pilha ===
-
+a& a 4 = ^ b& b 5 = ^ c& d& a a@ 1 + = ^ a@ b@ > 32 ? 38 # c "a e' maior" "!" + = ^  a@ b@ 1 + < 49 ? 53 # d "a e' menor" = ^  .

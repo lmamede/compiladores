@@ -40,12 +40,13 @@ STRING2       [`]({WS}|.)*[`]
 "const"  {return recuperarValor(_CONST);}
 "var"    {return recuperarValor(_VAR);}
 
-"+"     {return recuperarValor('+');}
-"+"/"=" {return recuperarValor(_CONC);}
-">="    {return recuperarValor(_MAIG);}
-"<="    {return recuperarValor(_MEIG);}
-"=="    {return recuperarValor(_IG);}
-"!="    {return recuperarValor(_DIF);}
+"+"         {return recuperarValor('+');}
+"+"/"+"     {return recuperarValor(_MAISMAIS);}
+"+"/"="     {return recuperarValor(_CONC);}
+">="        {return recuperarValor(_MAIG);}
+"<="        {return recuperarValor(_MEIG);}
+"=="        {return recuperarValor(_IG);}
+"!="        {return recuperarValor(_DIF);}
 
 {IDENTIFICADOR}     {return recuperarValor(_ID);}
 {COMENTARIO2}       {return recuperarValor(_COMENTARIO);}
