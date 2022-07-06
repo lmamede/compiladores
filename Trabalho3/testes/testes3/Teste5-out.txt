@@ -1,5 +1,1 @@
-=== Console ===
-=== Vars ===
-|{ i: -1; obj: { nome: Manoel!; nums: [ 0: 12; 1: 45; 2: undefined; 3: 13; ]; }; }|
-=== Pilha ===
-
+obj& obj {} = ^ i& i 0 2 - = ^ obj@ nome "Manoel" [=] ^ obj@ nums [] [=] ^ obj@ nums[@] 0 12 [=] ^ obj@ nums[@] 3 12 [=] ^ obj@ nums[@] 3 obj@ nums[@] 3[@] 1 + [=] ^ obj@ nums[@] i@ 3 + i i@ 1 + = ^ 45 [=] ^ obj@ 'nom' 'e' + obj@ nome[@] "!" + [=] ^ .

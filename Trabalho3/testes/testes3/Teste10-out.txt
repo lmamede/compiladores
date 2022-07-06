@@ -1,13 +1,1 @@
 Erro: a variável 'a' já foi declarada na linha 1.
-=== Console ===
-=== Vars ===
-|{ }|
-=== Pilha ===
-
-Summary of tests
-+------------------------------+
-| 10 tests run/ 0 tests passed |
-+------------------------------+
-
-
-Description

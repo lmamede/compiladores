@@ -16,6 +16,8 @@ FOR     [Ff][Oo][Rr]
 
 IF      [Ii][Ff]
 
+ELSE    [Ee][Ll][Ss][Ee]
+
 IDENTIFICADOR ("$"|{LETRA}|_)+({LETRA}|{DIGITO})*
 
 COMENTARIO1   "//"(.)*[\n]
@@ -28,18 +30,22 @@ STRING2       [`]({WS}|.)*[`]
 
 %%
 
-{WS}      {  }
+"\n"	  { linha++;}
+{WS}      { }
+
 {INT}     {return recuperarValor(_INT);}
 {FLOAT}   {return recuperarValor(_FLOAT);}
 
 {FOR}   {return recuperarValor(_FOR);}
 {IF}    {return recuperarValor(_IF);}
+{ELSE}  {return recuperarValor(_ELSE);}
 "print" {return recuperarValor(_PRINT);}
 
 "let"    {return recuperarValor(_LET);}
 "const"  {return recuperarValor(_CONST);}
 "var"    {return recuperarValor(_VAR);}
 
+"{"/"}"     {return recuperarValor(_NEWOBJECT);}
 "+"         {return recuperarValor('+');}
 "+"/"+"     {return recuperarValor(_MAISMAIS);}
 "+"/"="     {return recuperarValor(_CONC);}

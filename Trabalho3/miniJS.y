@@ -4,12 +4,27 @@
 #include <stdlib.h>
 #include <iostream>
 #include <map>
+#include <list>
 
 using namespace std;
 
+int count_label = 0;
+int linha = 1;
+
+int recuperarValor(int tk);
+void mostrar(string valor);
+void erro(string valor);
+extern "C" int yylex();  
+int yyparse();
+void yyerror(const char *);
+void setVar(string var, int linha);
+void checkVar(string var);
+
+map<string,int> var_declaradas;
+
+  
 struct Atributos {
   string valor;
-
 };
 
 #define YYSTYPE Atributos
@@ -20,17 +35,9 @@ struct Atributos {
 #define LABEL_RIF ";then_"
 #define LABEL_RENDIF ";end_if"
 
-
-int count_label = 0;
-int recuperarValor(int tk);
-void mostrar(string valor);
-extern "C" int yylex();  
-int yyparse();
-void yyerror(const char *);
-
 %}
 
-%token _ID _FOR _IF _INT _FLOAT _MAIG _MEIG _IG _DIF _STRING _STRING2 _COMENTARIO _PRINT _LET _CONST _VAR _CONC _MAISMAIS
+%token _ID _FOR _IF _ELSE _INT _FLOAT _MAIG _MEIG _IG _DIF _STRING _STRING2 _COMENTARIO _PRINT _LET _CONST _VAR _CONC _MAISMAIS _NEWOBJECT
 
 %start Entrada
 
@@ -48,7 +55,10 @@ Atribuicao_Objeto       : '=' Conta    {$$.valor = " " + $2.valor + " [=] ^";}
                         |              {$$.valor = "[@]";}
                         ;
 
-Atribuicao_MIGUAL       : '=' Conta      {$$.valor = $2.valor + "+ = ^";}
+Atribuicao_MIGUAL       : '=' Conta      {$$.valor = $2.valor + " + = ^";}
+                        ;
+
+AtribuicaoObj_MIGUAL    : '=' Conta      {$$.valor = $2.valor + " + [=] ^";}
                         ;
 
 Atribuicao_ID2 : _ID '=' Atribuicao_ID2  {$$.valor = " " +$1.valor + $3.valor + " " + $1.valor + "@" + " = ^ ";}
@@ -63,6 +73,7 @@ Conta_Simples :   '-' Termo Conta_Simples               {$$.valor = " " + $2.val
               |   '+' Termo Conta_Simples               {$$.valor = " " + $2.valor + " +" + $3.valor;} 
               |   '>' Termo Conta_Simples               {$$.valor = " " + $2.valor + $3.valor + " > ";}
               |   '<' Termo Conta_Simples               {$$.valor = " " + $2.valor + $3.valor + " < ";}
+              |   _IG Termo Conta_Simples               {$$.valor = " " + $2.valor + $3.valor + " == ";}
               |                                         {$$.valor = "";}
               ;
 
@@ -82,16 +93,16 @@ Funcao  : _ID '(' Argumentos ')'  {$$.valor = $3.valor + " " + $1.valor + " #";}
         ;
         
 Declaracao_Complexa     :  Declaracao_Simples                   {$$.valor = $1.valor;}
-                        | ',' _ID '=' Conta Declaracao_Complexa {$$.valor = " " + $2.valor + "& " + $2.valor + " " + $4.valor + " = ^"+ $5.valor;}
+                        | ',' _ID '=' Conta Declaracao_Complexa {setVar($2.valor, linha);$$.valor = " " + $2.valor + "& " + $2.valor + " " + $4.valor + " = ^"+ $5.valor;}
                         |                                       {$$.valor = "";}
                         ;
 
-Declaracao_Simples  : ',' _ID Declaracao_Simples  {$$.valor = " " + $2.valor + "&" + $3.valor;}
+Declaracao_Simples  : ',' _ID Declaracao_Simples  {setVar($2.valor, linha);$$.valor = " " + $2.valor + "&" + $3.valor;}
                     |                             {$$.valor = "";}
                     ;
 
-Expressao_Declaracao  : _ID  '=' Conta Declaracao_Complexa    {$$.valor = $1.valor + "& " + $1.valor + " " + $3.valor + " = ^" + $4.valor;}
-                      | _ID  Declaracao_Complexa              {$$.valor = $1.valor + "&" + $2.valor;}
+Expressao_Declaracao  : _ID  '=' Conta Declaracao_Complexa    {setVar($1.valor, linha); $$.valor = $1.valor + "& " + $1.valor + " " + $3.valor + " = ^" + $4.valor;}
+                      | _ID  Declaracao_Complexa              {setVar($1.valor, linha); $$.valor = $1.valor + "&" + $2.valor;}
                       ;
 
 Declaracao  : _LET    Expressao_Declaracao    {$$.valor = $2.valor;}
@@ -100,25 +111,33 @@ Declaracao  : _LET    Expressao_Declaracao    {$$.valor = $2.valor;}
             |                                 {$$.valor = "";}
             ;
 
-Membro_Simples  :   _STRING    {$$.valor = $1.valor;}
-                |   _INT       {$$.valor = $1.valor;}
-                |   _FLOAT     {$$.valor = $1.valor;}
-                |  '{' '}'     {$$.valor = "{}";}
-                |  '[' ']'     {$$.valor = "[]";}
+Membro_Simples  :   _STRING        {$$.valor = $1.valor;}
+                |   _INT           {$$.valor = $1.valor;}
+                |   _FLOAT         {$$.valor = $1.valor;}
+                |  _NEWOBJECT '}'  {$$.valor = "{}";}
+                |  '[' ']'         {$$.valor = "[]";}
                 ;
 
-Objeto  :   _ID '.' _ID          {$$.valor = $1.valor + "@ " + $3.valor;}
-        |   _ID '[' Indice ']'   {$$.valor = $1.valor + "@ " + $3.valor;}
+Objeto  :   _ID '.' _ID                 {$$.valor = $1.valor + "@ " + $3.valor;}
+        |   _ID '.' _ID '[' Conta ']'   {$$.valor = $1.valor + "@ " + $3.valor + "[@] " + $5.valor;}
+        |   _ID '[' Conta ']'           {$$.valor = $1.valor + "@ " + $3.valor;}
         ;
 
-Casos_ID        : _ID           Atribuicao_ID       {$$.valor = $1.valor + $2.valor;}
+Casos_ID        : _ID           Atribuicao_ID       {checkVar($1.valor);$$.valor = $1.valor + $2.valor;}
                 | _ID _CONC     Atribuicao_MIGUAL   {$$.valor = $1.valor + " " + $1.valor + "@ " + $3.valor;}
-                | _ID _MAISMAIS '+'                 {$$.valor = $1.valor + " " + $1.valor + "@ 1 + = ^ " + $1.valor + "@";}
+                | _ID _MAISMAIS '+' Conta_Simples   {$$.valor = $1.valor + "@" + $4.valor + " " + $1.valor + " " + $1.valor + "@ 1 + = ^";}
                 ;
+
+Casos_Objeto    : Objeto           Atribuicao_Objeto    {$$.valor = $1.valor + $2.valor;}
+                | Objeto _CONC     AtribuicaoObj_MIGUAL {$$.valor = $1.valor + " " + $1.valor + "[@] " + $3.valor;}
+                | Objeto _MAISMAIS '+'                  {$$.valor = $1.valor + " " + $1.valor + "@ 1 + [=] ^ " + $1.valor + "@";}
+                ;
+
+
 
 Membro  :   Membro_Simples                        {$$.valor = $1.valor;}      
         |   Funcao                                {$$.valor = $1.valor;}
-        |   Objeto Atribuicao_Objeto              {$$.valor = $1.valor + $2.valor;}
+        |   Casos_Objeto                          {$$.valor = $1.valor;}
         |   Casos_ID                              {$$.valor = $1.valor;}
         |   '+'    Conta                          {$$.valor = $2.valor;}
         |   '-'    Termo                          {$$.valor = "0 " + $2.valor + " -";}  
@@ -132,7 +151,9 @@ Termo :   Membro  Conta_Complexa  {$$.valor = $1.valor + $2.valor;}
 Conta   :   Termo   Conta_Simples {$$.valor = $1.valor + $2.valor;}          
         ;
 
-Jump    : Expressao Expressao  {count_label++; $$.valor = LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + " " + $1.valor + " " +LABEL_RENDIF + to_string(count_label) + " " + $2.valor;}
+Jump    : Expressao Expressao            {count_label++; $$.valor = $2.valor + LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + " " + $1.valor + " " +LABEL_RENDIF + to_string(count_label) + " " + $2.valor;}
+        | '{' Continuacao '}' Expressao  {count_label++; $$.valor = $2.valor +  LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + " " + $2.valor + " " +LABEL_RENDIF + to_string(count_label) + " " + $4.valor;}
+        |                                {$$.valor = "";}
         ;
 
 Comando :  _IF  '(' Expressao ')' Jump {$$.valor = $3.valor + LABEL_IF + to_string(count_label) + " ? " + $5.valor;}
@@ -140,8 +161,8 @@ Comando :  _IF  '(' Expressao ')' Jump {$$.valor = $3.valor + LABEL_IF + to_stri
         ;
 
 Expressao       :   Declaracao              {$$.valor = $1.valor;}
-                |   Conta   Expressao       {$$.valor = $1.valor + $2.valor;}
                 |   Comando                 {$$.valor = $1.valor;}
+                |   Conta   Expressao       {$$.valor = $1.valor + $2.valor;}   
                 ;
 
 Continuacao : Expressao ';' Continuacao {$$.valor = " " + $1.valor + $3.valor;}
@@ -153,6 +174,22 @@ Entrada  :  Expressao ';' Continuacao {mostrar($1.valor + $3.valor + " .");}
 %%
 
 #include "lex.yy.c"
+
+void setVar(string var, int linha){
+        map<string,int>::iterator it;
+        for (it = var_declaradas.begin(); it != var_declaradas.end(); ++it){
+                if(var == it->first) erro("a variável '" + var + "' já foi declarada na linha " + to_string(it->second) +".");
+        }
+        var_declaradas[var] = linha;
+}
+
+void checkVar(string var){
+        map<string,int>::iterator it;
+        for (it = var_declaradas.begin(); it != var_declaradas.end(); ++it){
+                if(var == it->first) return;
+        }
+        erro("a variável '" + var + "' não foi declarada.");
+}
 
 void ReplaceStringInPlace(std::string& subject, const std::string& search,
                           const std::string& replace) {
@@ -255,6 +292,11 @@ void mostrar(string valor){
         
    cout << valor;
 
+}
+
+void erro( string msg ) {
+  cout << "Erro: " << msg << endl;
+  exit(0); 
 }
 
 
