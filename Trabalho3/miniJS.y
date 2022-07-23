@@ -67,9 +67,6 @@ Argumentos  : Conta               {$$.valor = $1.valor;}
             |                     {$$.valor = "";}
             ;
 
-Indice  : _INT {$$.valor = $1.valor;}
-        ;
-
 Atribuicao_Objeto2      : Objeto '=' Atribuicao_Objeto2  {$$.valor = " " +$1.valor + $3.valor + " " + $1.valor + "[@]" + " [=] ^";}
                         | Conta                          {$$.valor = " " + $1.valor + " [=] ^";}
                         ;
@@ -141,8 +138,8 @@ Membro_Simples  :   _STRING        {$$.valor = $1.valor;}
                 |  '[' ']'         {$$.valor = "[]";}
                 ;
 
-Dimensoes       :   '[' Conta ']'Dimensoes {$$.valor ="[@] " + $2.valor + $2.getRetorno() + $4.valor;}
-                |                          {$$.valor = "";}
+Dimensoes       :   '[' Conta ']' Dimensoes {$$.valor ="[@] " + $2.valor + $2.getRetorno() + $4.valor;}
+                |                           {$$.valor = "";}
                 ;
 
 Objeto  :   _ID '.' _ID                  {$$.valor = $1.valor + "@ " + $3.valor;}
@@ -159,7 +156,6 @@ Casos_Objeto    : Objeto           Atribuicao_Objeto    {$$.valor = $1.valor + $
                 | Objeto _CONC     AtribuicaoObj_MIGUAL {$$.valor = $1.valor + " " + $1.valor + "[@] " + $3.valor;}
                 | Objeto _MAISMAIS '+'                  {$$.valor = $1.valor + " " + $1.valor + "@ 1 + [=] ^ " + $1.valor + "@";}
                 ;
-
 
 
 Membro  :   Membro_Simples                        {$$.valor = $1.valor;}      
@@ -181,10 +177,6 @@ Conta   :   Termo   Conta_Simples {$$.valor = $1.valor + $2.valor;$$.retorno=$1.
 Jump_IF    : Expressao ';' SENAO            {count_label++; $$.valor = $3.valor + " " + LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + " " + $1.valor + " " + LABEL_RENDIF + to_string(count_label);}
            | '{' Continuacao '}' SENAO      {count_label++; $$.valor = $4.valor + " " + LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + $2.valor + " "+ LABEL_RENDIF + to_string(count_label);}
            ;
-
-PONTO   :   ';' {$$.valor = "";}
-        |       {$$.valor = "";}
-        ;
 
 Jump_While      : Expressao ';'            {count_label++; $$.valor = LABEL_ENDWHILE + to_string(count_label) + " # " + LABEL_RCORPO_WHILE + to_string(count_label) + " " + $1.valor + " " + LABEL_WHILE + to_string(count_label) + " # " + LABEL_RENDWHILE + to_string(count_label);}
                 | '{' Continuacao '}'      {count_label++; $$.valor = LABEL_ENDWHILE + to_string(count_label) + " # " + LABEL_RCORPO_WHILE + to_string(count_label) + $2.valor + " " + LABEL_WHILE + to_string(count_label) + " # " + LABEL_RENDWHILE + to_string(count_label);}
