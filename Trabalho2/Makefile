@@ -1,5 +1,5 @@
-all: analisador testes/teste.py
-	python3 testes/teste.py
+all: analisador
+	../Testes_Trabalhos/test.py -d testes -p ./analisador
 
 lex.yy.c: scan.l
 	lex scan.l
