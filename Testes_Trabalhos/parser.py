@@ -72,10 +72,10 @@ def main(argv):
     except getopt.GetoptError:
         print("parser.py -d <tests_dataset_dir>")
     for opt, arg in opts:
-        if opt is "-d":
+        if opt in ("-d"):
             diretorio = arg + '/'
 
-    json_string = parsear_input(diretorio+"/entradas.txt", diretorio, encod)
+    json_string = parsear_input(diretorio+"entradas.txt", diretorio, encod)
     criar_cenarios_json(json_string, diretorio, encod)
 
 if __name__ == "__main__":
