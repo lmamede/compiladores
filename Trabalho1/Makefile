@@ -1,11 +1,11 @@
-all: saida entrada.txt
-	./saida < entrada.txt
+all: saida.out
+	./saida.out < testes/entrada.txt
 
 lex.yy.c: scan.lex
 	lex scan.lex
 
-saida: main.cc lex.yy.c 
-	g++ main.cc -o saida -lfl
+saida.out: main.cc lex.yy.c 
+	g++ main.cc -o saida.out -lfl
 	
-clean: saida lex.yy.c
-	rm saida lex.yy.c
+clean: saida.out lex.yy.c
+	rm saida.out lex.yy.c

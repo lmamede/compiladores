@@ -1,3 +1,6 @@
+#ignore c out files
+**/*.out
+
 #ignore lex compile
 **/*lex.yy.c
 
