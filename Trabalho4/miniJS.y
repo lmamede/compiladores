@@ -34,6 +34,7 @@ map<string, string> retornos;
 struct Atributos {
   string valor;
   string retorno = "";
+  int parametros=0;
   string getRetorno(){
         if(" " + valor == retorno){
                 return "";
@@ -70,9 +71,9 @@ struct Atributos {
 
 %%
 
-Argumentos  : Conta               {$$.valor = $1.valor;}
-            | Conta ',' Conta     {$$.valor = $1.valor + " " + $3.valor;}
-            |                     {$$.valor = "";}
+Argumentos  : Conta  Argumentos    {$$.valor = $1.valor + $2.valor; $$.parametros = 1 + $2.parametros;}
+            | ',' Argumentos       {$$.valor = " " + $2.valor; $$.parametros = $2.parametros;}
+            |                      {$$.valor = "";}
             ;
 
 Atribuicao_Objeto2      : Objeto '=' Atribuicao_Objeto2  {$$.valor = " " +$1.valor + $3.valor + " " + $1.valor + "[@]" + " [=] ^";}
@@ -112,25 +113,10 @@ Conta_Complexa2   :   '^' Termo {$$.valor = " " + $2.valor + " ^";}
 
 Conta_Complexa    :   '*' Membro Conta_Complexa2 Conta_Complexa {$$.valor = " " + $2.valor + $3.valor + " *" + $4.valor;}
                   |   '/' Termo                                 {$$.valor = " " + $2.valor + " /";}
-                  |   '%' Membro Conta_Complexa2 Conta_Complexa {$$.valor = " " + $2.valor + $3.valor + " *" + $4.valor;}
+                  |   '%' Membro Conta_Complexa2 Conta_Complexa {$$.valor = " " + $2.valor + $3.valor + " %" + $4.valor;}
                   |   Conta_Complexa2                           {$$.valor = $1.valor;}
                   |                                             {$$.valor = "";}
                   ;
-
-Parametros : Expressao_Declaracao {$$.valor = $1.valor;}
-           |                      {$$.valor = "";}
-           ;
-
-Retorno : _RETURN Conta {$$.valor = $2.valor + "'&retorno'" + "@ ~";}
-        |               {$$.valor = retorno_default;}
-        ;
-
-Funcao  : _FUNCTION _ID '(' Parametros ')' '{' Continuacao '}'  { string label = enderecoPraFrente($2.valor);
-                                                                   funcoes = funcoes + enderecoResolvido($2.valor) + $4.valor + " " + $7.valor + " ";
-                                                                   $$.valor = $2.valor + "& " + $2.valor + " {} = '&funcao' " + label + " [=] ^ ";}
-        | _PRINT  Argumentos                                  {$$.valor = $2.valor + " print #";}
-        | _ID '(' Argumentos ')'                              {$$.valor = $3.valor + " " + $1.valor + "@ $";}
-        ;
 
 Declaracao_Complexa     :  Declaracao_Simples                   {$$.valor = $1.valor;}
                         | ',' _ID '=' Conta Declaracao_Complexa {setVar($2.valor, linha);$$.valor = " " + $2.valor + "& " + $2.valor + " " + $4.valor + " = ^"+ $5.valor;}
@@ -165,6 +151,7 @@ Dimensoes       :   '[' Conta ']' Dimensoes {$$.valor ="[@] " + $2.valor + $2.ge
 Objeto  :   _ID '.' _ID                  {$$.valor = $1.valor + "@ " + $3.valor;}
         |   _ID '.' _ID '[' Conta ']'    {$$.valor = $1.valor + "@ " + $3.valor + "[@] " + $5.valor;}
         |   _ID '[' Conta ']'  Dimensoes {$$.valor = $1.valor + "@ " + $3.valor + $3.getRetorno() + $5.valor;}
+        |   Funcao                       {$$.valor = $1.valor;}
         ;
 
 Casos_ID        : _ID           Atribuicao_ID       {checkVar($1.valor);$$.valor = $1.valor + $2.valor; $$.retorno = " " + $1.valor + "@";}
@@ -182,7 +169,6 @@ Boolean : _TRUE  {$$.valor = $1.valor;}
         ;
 
 Membro  :   Membro_Simples                        {$$.valor = $1.valor;}      
-        |   Funcao                                {$$.valor = $1.valor;}
         |   Casos_Objeto                          {$$.valor = $1.valor;}
         |   Casos_ID                              {$$.valor = $1.valor;$$.retorno=$1.retorno;}
         |   '+'    Conta                          {$$.valor = $2.valor;}
@@ -196,6 +182,22 @@ Termo :   Membro  Conta_Complexa  {$$.valor = $1.valor + $2.valor;$$.retorno=$1.
       ;
 
 Conta   :   Termo   Conta_Simples {$$.valor = $1.valor + $2.valor;$$.retorno=$1.retorno;}          
+        ;
+
+
+Parametros : Expressao_Declaracao {$$.valor = $1.valor;}
+           |                      {$$.valor = "";}
+           ;
+
+Retorno : _RETURN Conta {$$.valor = $2.valor + " '&retorno' @ ~ " + retorno_default;}
+        |               {$$.valor = retorno_default;}
+        ;
+
+Funcao  : _FUNCTION _ID '(' Parametros ')' Bloco_Funcao  { string label = enderecoPraFrente($2.valor);
+                                                           funcoes = funcoes + enderecoResolvido($2.valor) + $4.valor + " " + $6.valor + " ";
+                                                           $$.valor = $2.valor + "& " + $2.valor + " {} = '&funcao' " + label + " [=] ^ ";}
+        | _PRINT  Argumentos                      {$$.valor = $2.valor + " print #";}
+        | _ID '(' Argumentos ')'                  {$$.valor = $3.valor + " " + to_string($3.parametros) + " " + $1.valor + "@ $";}
         ;
 
 Jump_IF    : Expressao ';' SENAO            {count_label++; $$.valor = $3.valor + " " + LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + " " + $1.valor + " " + LABEL_RENDIF + to_string(count_label);}
@@ -220,7 +222,15 @@ Comando :  _IF   '(' Expressao ')'  Jump_IF                              {$$.val
         | _WHILE '(' Expressao ')'  Jump_While                           {$$.valor = LABEL_RWHILE + to_string(count_label) + " " + $3.valor + " " + LABEL_CORPO_WHILE + to_string(count_label) + " ? " + $5.valor;}
         ;
 
-Bloco : '{' Continuacao '}' {$$.valor = $2.valor;}
+Bloco_Funcao : '{' Continuacao Retorno '}' {$$.valor = $2.valor;}
+             ;
+
+Retorno_Comandos : _RETURN Conta {$$.valor = $2.valor + " '&retorno' @ ~" + retorno_default;}
+                 |               {$$.valor = "";}
+                 ;
+
+Bloco : '{' Continuacao Retorno_Comandos'}' {$$.valor =  $2.valor + $3.valor;}
+      | Retorno_Comandos                    {$$.valor =  $1.valor;}
       ;
 
 Expressao       :   Declaracao              {$$.valor = $1.valor;}
