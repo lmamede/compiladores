@@ -1,6 +1,11 @@
 {
     "testes": [
         {
+            "nome": "Test 0: #0 Custom test",
+            "arquivo_input": "Teste0.txt",
+            "arquivo_output": "Teste0-out.txt"
+        },
+        {
             "nome": "Test 1: #1 asm",
             "arquivo_input": "Teste1.txt",
             "arquivo_output": "Teste1-out.txt"
