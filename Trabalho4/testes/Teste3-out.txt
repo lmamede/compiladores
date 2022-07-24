@@ -1,0 +1,6 @@
+Erro: a variável 'a' já foi declarada na linha 5.
+=== Console ===
+=== Vars ===
+|{ undefined: undefined; }|
+=== Pilha ===
+

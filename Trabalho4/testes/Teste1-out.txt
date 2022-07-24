@@ -1,0 +1,6 @@
+=== Console ===
+Hello, world!
+=== Vars ===
+|{ log: { &funcao: ##; }; r: undefined; undefined: undefined; }|
+=== Pilha ===
+

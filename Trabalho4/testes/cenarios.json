@@ -1,0 +1,79 @@
+{
+    "testes": [
+        {
+            "nome": "Test 1: #1 asm",
+            "arquivo_input": "Teste1.txt",
+            "arquivo_output": "Teste1-out.txt"
+        },
+        {
+            "nome": "Test 2: #2 Blocos e variáveis",
+            "arquivo_input": "Teste2.txt",
+            "arquivo_output": "Teste2-out.txt"
+        },
+        {
+            "nome": "Test 3: #3 Variável duplicada",
+            "arquivo_input": "Teste3.txt",
+            "arquivo_output": "Teste3-out.txt"
+        },
+        {
+            "nome": "Test 4: #4 Escopo",
+            "arquivo_input": "Teste4.txt",
+            "arquivo_output": "Teste4-out.txt"
+        },
+        {
+            "nome": "Test 5: #5 Escopo",
+            "arquivo_input": "Teste5.txt",
+            "arquivo_output": "Teste5-out.txt"
+        },
+        {
+            "nome": "Test 6: #6 Função sem parâmetros",
+            "arquivo_input": "Teste6.txt",
+            "arquivo_output": "Teste6-out.txt"
+        },
+        {
+            "nome": "Test 7: #7 Função com parâmetros",
+            "arquivo_input": "Teste7.txt",
+            "arquivo_output": "Teste7-out.txt"
+        },
+        {
+            "nome": "Test 8: #8 Função com parâmetros e var duplicada",
+            "arquivo_input": "Teste8.txt",
+            "arquivo_output": "Teste8-out.txt"
+        },
+        {
+            "nome": "Test 9: #9 mdc",
+            "arquivo_input": "Teste9.txt",
+            "arquivo_output": "Teste9-out.txt"
+        },
+        {
+            "nome": "Test 10: #10 função sem valor de retorno",
+            "arquivo_input": "Teste10.txt",
+            "arquivo_output": "Teste10-out.txt"
+        },
+        {
+            "nome": "Test 11: #11 métodos",
+            "arquivo_input": "Teste11.txt",
+            "arquivo_output": "Teste11-out.txt"
+        },
+        {
+            "nome": "Test 12: #12 argumentos",
+            "arquivo_input": "Teste12.txt",
+            "arquivo_output": "Teste12-out.txt"
+        },
+        {
+            "nome": "Test 13: #13 Função com variáveis locais",
+            "arquivo_input": "Teste13.txt",
+            "arquivo_output": "Teste13-out.txt"
+        },
+        {
+            "nome": "Test 14: #14 Função que se anula",
+            "arquivo_input": "Teste14.txt",
+            "arquivo_output": "Teste14-out.txt"
+        },
+        {
+            "nome": "Test 15: #15 Super teste",
+            "arquivo_input": "Teste15.txt",
+            "arquivo_output": "Teste15-out.txt"
+        }
+    ]
+}
