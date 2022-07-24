@@ -23,6 +23,10 @@ void setVar(string var, int linha);
 void checkVar(string var);
 string enderecoPraFrente(string nome);
 string enderecoResolvido(string nome);
+string declarar(string var, int linha);
+string declarar_arg(vector<string> args, int linha);
+string acessar_objeto(string nome_objeto, string campo);
+string jumpComandos(string label_endereco_final, string label_endereco_corpo);
 
 map<string,int> var_declaradas;
 
@@ -31,10 +35,12 @@ string retorno_default = "undefined @ '&retorno' @ ~";
 string funcoes = "";
 map<string, string> retornos;
 
+int args=0;
 struct Atributos {
   string valor;
   string retorno = "";
   int parametros=0;
+  vector<string> args_value;
   string getRetorno(){
         if(" " + valor == retorno){
                 return "";
@@ -45,23 +51,15 @@ struct Atributos {
 
 #define YYSTYPE Atributos
 
-#define LABEL_IF ":then_"
-#define LABEL_ENDIF ":end_if"
-#define LABEL_WHILE ":while_"
-#define LABEL_CORPO_WHILE ":whilec_"
-#define LABEL_ENDWHILE ":end_while"
-#define LABEL_FOR ":for_"
-#define LABEL_CORPO_FOR ":forc_"
-#define LABEL_ENDFOR ":end_for"
+#define LABEL_IF "then_"
+#define LABEL_ENDIF "end_if"
+#define LABEL_WHILE "while_"
+#define LABEL_CORPO_WHILE "whilec_"
+#define LABEL_ENDWHILE "end_while"
+#define LABEL_FOR "for_"
+#define LABEL_CORPO_FOR "forc_"
+#define LABEL_ENDFOR "end_for"
 
-#define LABEL_RIF ";then_"
-#define LABEL_RENDIF ";end_if"
-#define LABEL_RWHILE ";while_"
-#define LABEL_RCORPO_WHILE ";whilec_"
-#define LABEL_RENDWHILE ";end_while"
-#define LABEL_RFOR ";for_"
-#define LABEL_RCORPO_FOR ";forc_"
-#define LABEL_RENDFOR ";end_for"
 
 %}
 
@@ -76,7 +74,7 @@ Argumentos  : Conta  Argumentos    {$$.valor = $1.valor + $2.valor; $$.parametro
             |                      {$$.valor = "";}
             ;
 
-Atribuicao_Objeto2      : Objeto '=' Atribuicao_Objeto2  {$$.valor = " " +$1.valor + $3.valor + " " + $1.valor + "[@]" + " [=] ^";}
+Atribuicao_Objeto2      : Objeto '=' Atribuicao_Objeto2  {$$.valor = " " + $1.valor + $3.valor + " " + $1.valor + "[@]" + " [=] ^";}
                         | Conta                          {$$.valor = " " + $1.valor + " [=] ^";}
                         ;
 
@@ -118,17 +116,17 @@ Conta_Complexa    :   '*' Membro Conta_Complexa2 Conta_Complexa {$$.valor = " " 
                   |                                             {$$.valor = "";}
                   ;
 
-Declaracao_Complexa     :  Declaracao_Simples                   {$$.valor = $1.valor;}
-                        | ',' _ID '=' Conta Declaracao_Complexa {setVar($2.valor, linha);$$.valor = " " + $2.valor + "& " + $2.valor + " " + $4.valor + " = ^"+ $5.valor;}
+Declaracao_Complexa     :  Declaracao_Simples                   {$$.valor = $1.valor; $$.args_value = $1.args_value;}
+                        | ',' _ID '=' Conta Declaracao_Complexa {$$.valor = " " + declarar($2.valor, linha) + " " + $2.valor + " " + $4.valor + " = ^"+ $5.valor;}
                         |                                       {$$.valor = "";}
                         ;
 
-Declaracao_Simples  : ',' _ID Declaracao_Simples  {setVar($2.valor, linha);$$.valor = " " + $2.valor + "&" + $3.valor;}
-                    |                             {$$.valor = "";}
+Declaracao_Simples  : ',' _ID Declaracao_Simples  {$$.valor = " " + declarar($2.valor,linha) + $3.valor; $3.args_value.push_back($2.valor); $$.args_value = $3.args_value;}
+                    |                             {$$.valor = ""; }
                     ;
 
-Expressao_Declaracao  : _ID  '=' Conta Declaracao_Complexa    {setVar($1.valor, linha); $$.valor = $1.valor + "& " + $1.valor + " " + $3.valor + " = ^" + $4.valor;}
-                      | _ID  Declaracao_Complexa              {setVar($1.valor, linha); $$.valor = $1.valor + "&" + $2.valor;}
+Expressao_Declaracao  : _ID  '=' Conta Declaracao_Complexa    {$$.valor = declarar($1.valor, linha) + " " + $1.valor + " " + $3.valor + " = ^" + $4.valor;}
+                      | _ID  Declaracao_Complexa              {$$.valor = declarar($1.valor, linha) + $2.valor; $2.args_value.push_back($1.valor); $$.args_value = $2.args_value;}
                       ;
 
 Declaracao  : _LET    Expressao_Declaracao    {$$.valor = $2.valor;}
@@ -148,10 +146,9 @@ Dimensoes       :   '[' Conta ']' Dimensoes {$$.valor ="[@] " + $2.valor + $2.ge
                 |                           {$$.valor = "";}
                 ;
 
-Objeto  :   _ID '.' _ID                  {$$.valor = $1.valor + "@ " + $3.valor;}
-        |   _ID '.' _ID '[' Conta ']'    {$$.valor = $1.valor + "@ " + $3.valor + "[@] " + $5.valor;}
-        |   _ID '[' Conta ']'  Dimensoes {$$.valor = $1.valor + "@ " + $3.valor + $3.getRetorno() + $5.valor;}
-        |   Funcao                       {$$.valor = $1.valor;}
+Objeto  :   _ID '.' _ID                  {$$.valor = acessar_objeto($1.valor, $3.valor);}
+        |   _ID '.' _ID '[' Conta ']'    {$$.valor = acessar_objeto($1.valor, $3.valor) + "[@] " + $5.valor;}
+        |   _ID '[' Conta ']'  Dimensoes {$$.valor = acessar_objeto($1.valor, $3.valor) + $3.getRetorno() + $5.valor;}
         ;
 
 Casos_ID        : _ID           Atribuicao_ID       {checkVar($1.valor);$$.valor = $1.valor + $2.valor; $$.retorno = " " + $1.valor + "@";}
@@ -170,6 +167,7 @@ Boolean : _TRUE  {$$.valor = $1.valor;}
 
 Membro  :   Membro_Simples                        {$$.valor = $1.valor;}      
         |   Casos_Objeto                          {$$.valor = $1.valor;}
+        |   Funcao                                {$$.valor = $1.valor;}
         |   Casos_ID                              {$$.valor = $1.valor;$$.retorno=$1.retorno;}
         |   '+'    Conta                          {$$.valor = $2.valor;}
         |   '-'    Termo                          {$$.valor = "0 " + $2.valor + " -";}  
@@ -185,7 +183,7 @@ Conta   :   Termo   Conta_Simples {$$.valor = $1.valor + $2.valor;$$.retorno=$1.
         ;
 
 
-Parametros : Expressao_Declaracao {$$.valor = $1.valor;}
+Parametros : Expressao_Declaracao {$$.valor = declarar_arg($1.args_value, linha);}
            |                      {$$.valor = "";}
            ;
 
@@ -193,23 +191,23 @@ Retorno : _RETURN Conta {$$.valor = $2.valor + " '&retorno' @ ~ " + retorno_defa
         |               {$$.valor = retorno_default;}
         ;
 
-Funcao  : _FUNCTION _ID '(' Parametros ')' Bloco_Funcao  { string label = enderecoPraFrente($2.valor);
-                                                           funcoes = funcoes + enderecoResolvido($2.valor) + $4.valor + " " + $6.valor + " ";
-                                                           $$.valor = $2.valor + "& " + $2.valor + " {} = '&funcao' " + label + " [=] ^ ";}
+Funcao  : _FUNCTION _ID '(' Parametros ')' Bloco_Funcao  { count_label++;string label = enderecoPraFrente($2.valor); 
+                                                           funcoes = funcoes + enderecoResolvido($2.valor) + $4.valor + " ";
+                                                           $$.valor = $4.valor + " " + $6.valor + " " + $2.valor + "& " + $2.valor + " {} = '&funcao' " + label + " [=] ^ ";}
         | _PRINT  Argumentos                      {$$.valor = $2.valor + " print #";}
         | _ID '(' Argumentos ')'                  {$$.valor = $3.valor + " " + to_string($3.parametros) + " " + $1.valor + "@ $";}
         ;
 
-Jump_IF    : Expressao ';' SENAO            {count_label++; $$.valor = $3.valor + " " + LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + " " + $1.valor + " " + LABEL_RENDIF + to_string(count_label);}
-           | Bloco SENAO                     {count_label++; $$.valor = $2.valor + " " + LABEL_ENDIF + to_string(count_label) + " # " + LABEL_RIF + to_string(count_label) + $1.valor + " "+ LABEL_RENDIF + to_string(count_label);}
+Jump_IF    : Expressao ';' SENAO           {count_label++;$$.valor = $3.valor + " " + jumpComandos(LABEL_ENDIF, LABEL_IF) + " " + $1.valor + " " + enderecoResolvido(LABEL_ENDIF);}
+           | Bloco SENAO                   {count_label++;$$.valor = $2.valor + " " + jumpComandos(LABEL_ENDIF, LABEL_IF) + $1.valor + " "+ enderecoResolvido(LABEL_ENDIF);}
            ;
 
-Jump_While      : Expressao ';'            {count_label++; $$.valor = LABEL_ENDWHILE + to_string(count_label) + " # " + LABEL_RCORPO_WHILE + to_string(count_label) + " " + $1.valor + " " + LABEL_WHILE + to_string(count_label) + " # " + LABEL_RENDWHILE + to_string(count_label);}
-                | Bloco                    {count_label++; $$.valor = LABEL_ENDWHILE + to_string(count_label) + " # " + LABEL_RCORPO_WHILE + to_string(count_label) + $1.valor + " " + LABEL_WHILE + to_string(count_label) + " # " + LABEL_RENDWHILE + to_string(count_label);}
+Jump_While      : Expressao ';'            {count_label++;$$.valor = jumpComandos(LABEL_ENDWHILE, LABEL_CORPO_WHILE) + " " + $1.valor + " " + jumpComandos(LABEL_WHILE, LABEL_ENDWHILE);}
+                | Bloco                    {count_label++;$$.valor = jumpComandos(LABEL_ENDWHILE, LABEL_CORPO_WHILE) + $1.valor + " " + jumpComandos(LABEL_WHILE, LABEL_ENDWHILE);}
                 ;
 
-Jump_For        : Expressao ';'            {count_label++; $$.valor = LABEL_ENDFOR + to_string(count_label) + " # " + LABEL_RCORPO_FOR + to_string(count_label) + $1.valor;}
-                | Bloco                    {count_label++; $$.valor = LABEL_ENDFOR + to_string(count_label) + " # " + LABEL_RCORPO_FOR + to_string(count_label) + $1.valor;}
+Jump_For        : Expressao ';'            {count_label++;$$.valor = jumpComandos(LABEL_ENDFOR, LABEL_CORPO_FOR) + $1.valor;}
+                | Bloco                    {count_label++;$$.valor = jumpComandos(LABEL_ENDFOR, LABEL_CORPO_FOR) + $1.valor;}
                 | 
                 ;
 
@@ -217,15 +215,15 @@ SENAO   :  _ELSE Continuacao  {$$.valor = $2.valor;}
         |                     {$$.valor = "";}
         ;
 
-Comando :  _IF   '(' Expressao ')'  Jump_IF                              {$$.valor = $3.valor + " " + LABEL_IF + to_string(count_label) + " ?" + $5.valor;}
-        |  _FOR  '(' Expressao ';'  Expressao ';' Expressao ')' Jump_For {$$.valor = $3.valor + " " + LABEL_RFOR + to_string(count_label) + " " + $5.valor + " " + LABEL_CORPO_FOR + to_string(count_label) + " ? " + $9.valor + " " + $7.valor + " " + LABEL_FOR + to_string(count_label) + " # " + LABEL_RENDFOR + to_string(count_label);}
-        | _WHILE '(' Expressao ')'  Jump_While                           {$$.valor = LABEL_RWHILE + to_string(count_label) + " " + $3.valor + " " + LABEL_CORPO_WHILE + to_string(count_label) + " ? " + $5.valor;}
+Comando :  _IF   '(' Expressao ')'  Jump_IF                              {$$.valor = $3.valor + " " + enderecoPraFrente(LABEL_IF) + " ?" + $5.valor;}
+        |  _FOR  '(' Expressao ';'  Expressao ';' Expressao ')' Jump_For {$$.valor = $3.valor + " " + enderecoResolvido(LABEL_FOR) + " " + $5.valor + " " + enderecoPraFrente(LABEL_CORPO_FOR) + " ? " + $9.valor + " " + $7.valor + " " + enderecoPraFrente(LABEL_FOR) + " # " + enderecoResolvido(LABEL_ENDFOR);}
+        | _WHILE '(' Expressao ')'  Jump_While                           {$$.valor = enderecoResolvido(LABEL_WHILE) + " " + $3.valor + " " + enderecoPraFrente(LABEL_CORPO_WHILE) + " ? " + $5.valor;}
         ;
 
-Bloco_Funcao : '{' Continuacao Retorno '}' {$$.valor = $2.valor;}
+Bloco_Funcao : '{' Continuacao Retorno '}' {$$.valor = $2.valor + " " + $3.valor;}
              ;
 
-Retorno_Comandos : _RETURN Conta {$$.valor = $2.valor + " '&retorno' @ ~" + retorno_default;}
+Retorno_Comandos : _RETURN Conta {$$.valor = $2.valor + " '&retorno' @ ~ ";}
                  |               {$$.valor = "";}
                  ;
 
@@ -235,7 +233,7 @@ Bloco : '{' Continuacao Retorno_Comandos'}' {$$.valor =  $2.valor + $3.valor;}
 
 Expressao       :   Declaracao              {$$.valor = $1.valor;}
                 |   Conta   Expressao       {$$.valor = $1.valor + $2.valor;}
-                |   Bloco Expressao         {$$.valor = $1.valor + $2.valor;}
+                |   Bloco   Expressao       {$$.valor = $1.valor + $2.valor;}
                 ;
 
 Continuacao  : Expressao ';' Continuacao         {$$.valor = " " + $1.valor + $3.valor;}
@@ -250,6 +248,41 @@ Entrada :   Expressao ';' Continuacao         {mostrar($1.valor + $3.valor + " .
 %%
 
 #include "lex.yy.c"
+
+string acessar_objeto(string nome_objeto, string campo){
+        return nome_objeto + "@ " + campo;
+}
+
+
+string declarar(string var, int linha){
+        setVar(var, linha);
+        return var + "&";
+}
+
+string declarar_arg(vector<string> args, int linha){
+        int count = args.size() - 1;
+        string result = "";
+
+        for(string var : args){
+               result = var + "& " + var + " arguments @ " + to_string(count) + " [@] = ^ " + result; 
+               count--;
+        }
+
+        return result;
+}
+
+
+string enderecoPraFrente(string nome){
+        return ":" + nome + to_string(count_label);
+}
+
+string enderecoResolvido(string nome){
+        return ";" + nome + to_string(count_label);
+}
+
+string jumpComandos(string label_endereco_final, string label_endereco_corpo){
+        return enderecoPraFrente(label_endereco_final) + " # " + enderecoResolvido(label_endereco_corpo);
+}
 
 void setVar(string var, int linha){
         map<string,int>::iterator it;
@@ -279,14 +312,6 @@ void ReplaceStringInPlace(std::string& subject, const std::string& search,
 string printToken(int numToken, string tk){
         //cout << numToken << " " << tk << endl;
         return "";
-}
-
-string enderecoPraFrente(string nome){
-        return ":" + nome + to_string(count_label);
-}
-
-string enderecoResolvido(string nome){
-        return ";" + nome + to_string(count_label);
 }
 
 void mostrar(string valor){
