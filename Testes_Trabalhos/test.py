@@ -11,9 +11,13 @@ ANSI_CLOSE = ANSI + '0m'
 
 FALHA_TESTES = f":{VERMELHO} FALHOU, \nesperava"
 SUCESSO_TESTES = f":{VERDE} PASSOU para"
+failed_count = 0
+tests_count = 0
 
 def mostrar_falha(nome_teste, expected, output, input):
+    global failed_count
     falha = f"{nome_teste}{FALHA_TESTES}"
+    failed_count += 1
     print(falha, f"\"{expected}\", \nencontrou \"{output}\", \ninput \"{input}\"{ANSI_CLOSE}\n")
 
 def testar_token(output, expected_token, nome_teste, input):
@@ -64,8 +68,12 @@ def testar_single_input(arquivo, expected_out, nome_teste, programa):
     testar_saida(output, expected[0], nome_teste, ' '.join(input))
     print("\n")
 
-   
+def show_failed_testes():
+    print("==========================================================")
+    print("#####     RESULTADO: ", failed_count, "/", tests_count, " testes falharam      ######\n") 
+
 def main(argv):
+    global tests_count
     test_dataset_json = ''
     dir = ''
     programa = ''
@@ -86,7 +94,10 @@ def main(argv):
     cenarios = json.load(f)
 
     for teste in cenarios["testes"]:
+        tests_count+=1
         testar_single_input(dir + teste["arquivo_input"], dir + teste["arquivo_output"],teste["nome"], programa)
+    
+    show_failed_testes()
     
 if __name__ == "__main__":
    main(sys.argv[1:])
