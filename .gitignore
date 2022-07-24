@@ -1,3 +1,6 @@
+#ignore yacc files
+**/*.y.tab.c
+
 #ignore c out files
 **/*.out
 
