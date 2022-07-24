@@ -77,11 +77,13 @@ def main(argv):
     test_dataset_json = ''
     dir = ''
     programa = ''
+    test_index=0
+    solo_test = False;
 
     try:
-        opts, args = getopt.getopt(argv,"d:p:")
+        opts, args = getopt.getopt(argv,"d:p:t:")
     except getopt.GetoptError:
-        print('teste.py -d <test_datasets_directory> -p <program_path>')
+        print('test.py -d <test_datasets_directory> -p <program_path> -t <test_index>')
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-d"):
@@ -89,12 +91,17 @@ def main(argv):
             dir = arg + "/"
         elif opt in ("-p"):
             programa = arg
+        elif opt in ("-t"):
+            test_index = arg
+            solo_test = True;
 
     f = open(test_dataset_json)
     cenarios = json.load(f)
 
     for teste in cenarios["testes"]:
         tests_count+=1
+        if(solo_test):
+            if(str(test_index) not in teste["arquivo_input"]): continue
         testar_single_input(dir + teste["arquivo_input"], dir + teste["arquivo_output"],teste["nome"], programa)
     
     show_failed_testes()
