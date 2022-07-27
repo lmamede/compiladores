@@ -1,7 +1,7 @@
 const a = 9;
 function log( msg ) {
   msg asm{println # undefined};
-}
+};
 
 var c = [
 ];

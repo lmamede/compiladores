@@ -14,9 +14,5 @@ let a = "Saida: ";
 let b = 3.14;
 
 console.teste = {};
-console.teste.log = [
-] ;
-console.teste.log[1] = teste;
-
-console.teste.log[1]( a, b, "5" );
+console.teste.log = [];
 

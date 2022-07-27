@@ -1,6 +1,0 @@
-Erro: a variável 'z' já foi declarada na linha 1.
-=== Console ===
-=== Vars ===
-|{ undefined: undefined; }|
-=== Pilha ===
-

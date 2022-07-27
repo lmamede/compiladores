@@ -34,7 +34,7 @@ STRING2       [`]({WS}|.)*[`]
 
 "\t"       { coluna += 4; }
 " "        { coluna++; }
-"\n"	   { linha++;}
+"\n"	   { linha++;coluna=1;}
 {WS}       { }
 
 {INT}     {return recuperarValor(_INT);}
@@ -44,6 +44,7 @@ STRING2       [`]({WS}|.)*[`]
 {WHILE}      {return recuperarValor(_WHILE);}
 {IF}         {return recuperarValor(_IF);}
 {ELSE}       {return recuperarValor(_ELSE);}
+"asm{".*"}"  {return recuperarValor(_ASM); }
 "println"    {return recuperarValor(_PRINT);}
 "function"   {return recuperarValor(_FUNCTION);}
 "return"     {return recuperarValor(_RETURN);} 
@@ -55,7 +56,7 @@ STRING2       [`]({WS}|.)*[`]
 "var"    {return recuperarValor(_VAR);}
 
 "{"/"}"     {return recuperarValor(_NEWOBJECT);}
-"{"/" }"     {return recuperarValor(_NEWOBJECT);}
+"{"/" }"        {return recuperarValor(_NEWOBJECT);}
 "+"         {return recuperarValor('+');}
 "+"/"+"     {return recuperarValor(_MAISMAIS);}
 "+"/"="     {return recuperarValor(_CONC);}

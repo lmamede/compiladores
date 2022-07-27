@@ -1,6 +1,6 @@
 all: miniJS.out
-	../Testes_Trabalhos/test.py -d ../Trabalho3/testes/testes3 -p ./miniJS.out
-	../Testes_Trabalhos/test.py -d testes -p ./miniJS.out
+	../Testes_Trabalhos/test.py -d testes/testes3 -p ./miniJS.out
+	../Testes_Trabalhos/test.py -d testes/testes4 -p ./miniJS.out
 
 lex.yy.c: miniJS.l
 	lex miniJS.l

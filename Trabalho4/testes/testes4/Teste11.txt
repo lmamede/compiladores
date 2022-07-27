@@ -1,6 +1,5 @@
 let console = { };
-let Number =  {
-};
+let Number =  {};
 
 function log( msg ) {
   msg asm{println # undefined};
