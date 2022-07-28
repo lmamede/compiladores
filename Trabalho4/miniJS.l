@@ -30,6 +30,11 @@ STRING        ["]([^\"]|"\\"[\"]|[\"][\"])*["]
 STRING1       [']([^\']|"\\'"|[\'][\'])*[']
 STRING2       [`]({WS}|.)*[`]
 
+OBJECT        "{"{WS}*"}"
+ARRAY         "["{WS}*"]"
+MAISMAIS      "+""+"
+BOOLEAN       ("true"|"false")
+
 %%
 
 "\t"       { coluna += 4; }
@@ -48,22 +53,21 @@ STRING2       [`]({WS}|.)*[`]
 "println"    {return recuperarValor(_PRINT);}
 "function"   {return recuperarValor(_FUNCTION);}
 "return"     {return recuperarValor(_RETURN);} 
-"true"       {return recuperarValor(_TRUE);} 
-"false"      {return recuperarValor(_FALSE);} 
+{BOOLEAN}    {return recuperarValor(_BOOLEAN);} 
 
 "let"    {return recuperarValor(_LET);}
 "const"  {return recuperarValor(_CONST);}
 "var"    {return recuperarValor(_VAR);}
 
-"{"/"}"     {return recuperarValor(_NEWOBJECT);}
-"{"/" }"        {return recuperarValor(_NEWOBJECT);}
-"+"         {return recuperarValor('+');}
-"+"/"+"     {return recuperarValor(_MAISMAIS);}
-"+"/"="     {return recuperarValor(_CONC);}
-">="        {return recuperarValor(_MAIG);}
-"<="        {return recuperarValor(_MEIG);}
-"=="        {return recuperarValor(_IG);}
-"!="        {return recuperarValor(_DIF);}
+{OBJECT}     {return recuperarValor(_NEWOBJECT);}
+{ARRAY}     {return recuperarValor(_ARRAY);}
+{MAISMAIS}   {return recuperarValor(_MAISMAIS);}
+"+"          {return recuperarValor('+');}
+"+"/"="      {return recuperarValor(_CONC);}
+">="         {return recuperarValor(_MAIG);}
+"<="         {return recuperarValor(_MEIG);}
+"=="         {return recuperarValor(_IG);}
+"!="         {return recuperarValor(_DIF);}
 
 {IDENTIFICADOR}     {return recuperarValor(_ID);}
 {COMENTARIO2}       {return recuperarValor(_COMENTARIO);}
