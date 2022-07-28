@@ -1,5 +1,1 @@
-=== Console ===
-=== Vars ===
-|{ f: { &funcao: ##; }; res: { arr: [ 0: undefined; 1: 0; ]; num: 55; }; undefined: undefined; }|
-=== Pilha ===
-
+f & f {} = '&funcao' 20 [=] ^ res & res 11 1 f @ $ = ^ . x & x arguments @ 0 [@] = ^ b & b 5 x @ * = ^ c & c {} = ^ c @ num b @ [=] ^ c @ arr [] [=] ^ c @ arr [@] 1 0 [=] ^ c @ '&retorno' @ ~ undefined @ '&retorno' @ ~
