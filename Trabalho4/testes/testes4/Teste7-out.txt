@@ -1,5 +1,1 @@
-=== Console ===
-=== Vars ===
-|{ a: 27.05; sqr: { &funcao: ##; }; undefined: undefined; y: 0.01; }|
-=== Pilha ===
-
+sqr & sqr {} = '&funcao' 27 [=] ^ y & y 0.01 = ^ a & a 5.2 7 2 sqr @ $ = ^ . x & x arguments @ 0 [@] = ^ x @ x @ * y @ + '&retorno' @ ~ undefined @ '&retorno' @ ~

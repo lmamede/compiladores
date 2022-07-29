@@ -4,7 +4,7 @@ DIGITO  [0-9]
 
 LETRA   [A-Za-z]
 
-WS      [ \s\t\n]*
+WS      [ \t\n]*
 
 INT     {DIGITO}+
 
