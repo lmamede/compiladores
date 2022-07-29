@@ -12,6 +12,8 @@ using namespace std;
 int count_label = 0;
 int linha = 0;
 int coluna = 1;
+int locais = 0;
+string declaracao = "";
 
 int recuperarValor(int tk);
 void mostrar(string valor);
@@ -141,9 +143,9 @@ Expressao_Declaracao  : _ID  '=' Conta Declaracao_Complexa    {$$.valor = declar
                       | _ID  Declaracao_Complexa              {$$.valor = declarar($1.valor) + $2.valor; $2.args_value.push_back($1.valor); $$.args_value = $2.args_value;}
                       ;
 
-Declaracao  : _LET    Expressao_Declaracao    {$$.valor = $2.valor;}
-            | _CONST  Expressao_Declaracao    {$$.valor = $2.valor;}
-            | _VAR    Expressao_Declaracao    {$$.valor = $2.valor;}
+Declaracao  : _LET   {declaracao = $1.valor;} Expressao_Declaracao    {$$.valor = $3.valor;}
+            | _CONST {declaracao = $1.valor;} Expressao_Declaracao    {$$.valor = $3.valor;}
+            | _VAR   {declaracao = $1.valor;} Expressao_Declaracao    {$$.valor = $3.valor;}
             |                                 {$$.valor = "";}
             ;
 
@@ -180,8 +182,9 @@ Objeto  :   _ID  '.' Continuacao_Objeto                        {$$.valor = acess
         ;
 
 Casos_ID        : _ID _CONC          Atribuicao_MIGUAL   {$$.valor = $1.valor + acessar_variavel($1.valor) + $3.valor;}
-                | _ID _MAISMAIS      Conta_Simples       {$$.valor = $1.valor + GET_VALUE + $3.valor + " " + $1.valor + acessar_variavel($1.valor) + "1 + = ^ ";}
+                | _ID _MAISMAIS      Conta_Simples       {$$.valor = $1.valor + GET_VALUE + $3.valor + " " + $1.valor + " " + acessar_variavel($1.valor) + "1 + = ^ ";}
                 | _ID Funcao                             {$$.valor = $2.valor + acessar_variavel($1.valor) + "$ ";}
+                | '(' _ID ')' Funcao                     {$$.valor = $4.valor + acessar_variavel($2.valor) + "$ ";}
                 | _ID Atribuicao_ID                      {checkVar($1.valor);$$.valor = $1.valor + $2.valor; $$.retorno = $2.valor == " @ "? "" : acessar_variavel($1.valor);}
                 ;
 
@@ -254,7 +257,7 @@ Retorno_Comandos : _RETURN Conta {$$.valor = $2.valor + acessar_variavel("'&reto
                  |               {$$.valor = "";}
                  ;
 
-Bloco : '{' {escopo_local = true;} Continuacao Retorno_Comandos'}' {escopo_local=false;$$.valor =  $3.valor + $4.valor;}
+Bloco : '{' {escopo_local = true; funcao = "local" + to_string(locais++);} Continuacao Retorno_Comandos'}' {escopo_local=false;$$.valor = "<{ " +  $3.valor + $4.valor + "}> ";}
       | Retorno_Comandos                    {$$.valor = $1.valor;}
       ;
 
@@ -348,12 +351,12 @@ void setVar(string var){
                 map<string, int> vars = var_locais_declaradas[funcao];
                 
                 for (it = vars.begin(); it != vars.end(); ++it){
-                        if(var == it->first) erro("a variável '" + var + "' já foi declarada na linha " + to_string(it->second) +".");
+                        if(var == it->first && declaracao != "var") erro("a variável '" + var + "' já foi declarada na linha " + to_string(it->second) +".");
                 }
                 var_locais_declaradas[funcao][var] = linhaAtual;
         }else{
                 for (it = var_declaradas.begin(); it != var_declaradas.end(); ++it){
-                        if(var == it->first & !escopo_local) erro("a variável '" + var + "' já foi declarada na linha " + to_string(it->second) +".");
+                        if(var == it->first & !escopo_local && declaracao != "var") erro("a variável '" + var + "' já foi declarada na linha " + to_string(it->second) + ".");
                 }
                 var_declaradas[var] = linhaAtual;
         }        

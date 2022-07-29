@@ -40,7 +40,6 @@ BOOLEAN       ("true"|"false")
 "\t"       { coluna += 4; }
 " "        { coluna++; }
 "\n"	   { linha++;coluna=1;}
-{WS}       { }
 
 {INT}     {return recuperarValor(_INT);}
 {FLOAT}   {return recuperarValor(_FLOAT);}
