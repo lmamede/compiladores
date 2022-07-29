@@ -165,17 +165,16 @@ Array   :       _ID  '[' Conta ']'                 {$$.valor = acessar_objeto($1
 
 Campo_Objeto    :  Array                             {$$.valor = $1.valor;}
                 |  _ID                               {$$.valor = $1.valor;}
-                | _ID Funcao                         {$$.valor = $2.valor + acessar_variavel($1.valor) + "$";}
                 ;
 
 Continuacao_Objeto      :   Campo_Objeto  Continuacao_Objeto          {$$.valor = $1.valor + $2.valor;}
                         |   Array                                     {$$.valor = $1.valor;}
-                        |   '.'  Campo_Objeto Continuacao_Objeto      {string space = " ";$$.valor = GET_VALUE + space + $2.valor + $3.valor;}
+                        |   '.'  Campo_Objeto Continuacao_Objeto      {string space = " ";$$.valor = " [@]" + space + $2.valor + $3.valor;}
                         |                                             {$$.valor = "";}
                         ;
 
 Objeto  :   _ID  '.' Continuacao_Objeto                        {$$.valor = acessar_campo($1.valor, $3.valor);}
-        |   '(' _ID  ')' Continuacao_Objeto  Dimensoes         {$$.valor = $2.valor + $4.valor + $5.valor + " ";}
+        |   '(' _ID  ')' '.' Continuacao_Objeto                {$$.valor = acessar_campo($2.valor, $5.valor);}
         |   Array                                              {$$.valor = $1.valor + " ";}
         |   '(' Objeto ')' Dimensoes                           {$$.valor = $2.valor + $4.valor;}
         ;
@@ -183,13 +182,13 @@ Objeto  :   _ID  '.' Continuacao_Objeto                        {$$.valor = acess
 Casos_ID        : _ID _CONC          Atribuicao_MIGUAL   {$$.valor = $1.valor + acessar_variavel($1.valor) + $3.valor;}
                 | _ID _MAISMAIS      Conta_Simples       {$$.valor = $1.valor + GET_VALUE + $3.valor + " " + $1.valor + acessar_variavel($1.valor) + "1 + = ^ ";}
                 | _ID Funcao                             {$$.valor = $2.valor + acessar_variavel($1.valor) + "$ ";}
-                | _ID Atribuicao_ID                      {checkVar($1.valor);$$.valor = $1.valor + $2.valor; $$.retorno = acessar_variavel($1.valor);}
+                | _ID Atribuicao_ID                      {checkVar($1.valor);$$.valor = $1.valor + $2.valor; $$.retorno = $2.valor == " @ "? "" : acessar_variavel($1.valor);}
                 ;
 
 Casos_Objeto    : Objeto    Atribuicao_Objeto                       {$$.valor = $1.valor + $2.valor;}
                 | Objeto   _CONC               AtribuicaoObj_MIGUAL {$$.valor = $1.valor + " " + acessar_objeto($1.valor) + $3.valor;}
                 | Objeto   _MAISMAIS                                {$$.valor = $1.valor + acessar_variavel($1.valor) + "1 + [=] ^ " + acessar_variavel($1.valor);}
-                | Objeto   Funcao                                   {$$.valor = $2.valor + acessar_variavel($1.valor) + "$ ";}
+                | Objeto   Funcao                                   {$$.valor = $2.valor + $1.valor + "[@] $ ";}
                 ;
 
 Membro  :   Membro_Simples                        {$$.valor = $1.valor;}      
