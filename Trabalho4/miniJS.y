@@ -14,6 +14,7 @@ int linha = 0;
 int coluna = 1;
 int locais = 0;
 string declaracao = "";
+int declaradaAntes = 0;
 
 int recuperarValor(int tk);
 void mostrar(string valor);
@@ -48,8 +49,6 @@ string acessar_variavel(string nome_var);
 
 #define GET_VALUE " @"
 #define DECLARACAO " & "
-
-
 
 map<string,int> var_declaradas;
 map<string,map<string,int>> var_locais_declaradas;
@@ -161,8 +160,9 @@ Dimensoes       :   '[' Conta ']' Dimensoes {$$.valor ="[@] " + $2.valor + $2.ge
                 ;
 
 
-Array   :       _ID  '[' Conta ']'                 {$$.valor = acessar_objeto($1.valor) + $3.valor;}  
-        |       _ID  '[' Conta ']'  Dimensoes      {$$.valor = acessar_campo($1.valor, $3.valor) + $3.getRetorno() + $5.valor;}
+Array   :       _ID  '[' Conta ']'                         {$$.valor = acessar_objeto($1.valor) + $3.valor;}  
+        |       _ID  '[' Conta ']'  Dimensoes              {$$.valor = acessar_campo($1.valor, $3.valor) + $3.getRetorno() + $5.valor;}
+        |       '(' _ID ')'  '[' Conta ']'  Dimensoes      {$$.valor = acessar_campo($2.valor, $5.valor) + $5.getRetorno() + $7.valor;}
         ;
 
 Campo_Objeto    :  Array                             {$$.valor = $1.valor;}
@@ -260,10 +260,13 @@ Bloco : '{' {escopo_local = true; funcao = "local" + to_string(locais++);} Conti
       | Retorno_Comandos                    {$$.valor = $1.valor;}
       ;
 
-Expressao       :   Declaracao              {$$.valor = $1.valor;}
-                |   Conta   Expressao       {$$.valor = $1.valor + $2.valor;}
-                |   Bloco   Expressao       {$$.valor = $1.valor + $2.valor;}
-                |   _ASM                    {$$.valor = asm_trim($1.valor);}
+Expressao       :   Declaracao                     {$$.valor = $1.valor;}
+                |   _ID      Funcao      Expressao          {$$.valor = $2.valor + acessar_variavel($1.valor) + "$ ^ " + $3.valor;}
+                | '(' _ID ')' Funcao     Expressao          {$$.valor = $4.valor + acessar_variavel($2.valor) + "$ ^ " + $5.valor;}
+                |   Objeto   Funcao      Expressao          {$$.valor = $2.valor + $1.valor + "[@] $ ^ " + $3.valor;}
+                |   Conta   Expressao              {$$.valor = $1.valor + $2.valor;}
+                |   Bloco   Expressao              {$$.valor = $1.valor + $2.valor;}
+                |   _ASM                           {$$.valor = asm_trim($1.valor);}
                 ;
 
 Continuacao  : Expressao ';' Continuacao         {$$.valor = $1.valor + $3.valor;}
@@ -293,7 +296,7 @@ string declara_funcao(string nome, string parametros, string corpo){
 string asm_trim(string asm_command){
         ReplaceStringInPlace(asm_command, "asm{", "");
         ReplaceStringInPlace(asm_command, "}", "");
-        return asm_command + " ";
+        return asm_command + " ^ ";
 }
 
 string acessar_objeto(string nome_var){
@@ -312,6 +315,10 @@ string acessar_campo(string nome_objeto, string campo){
 
 string declarar(string var){
         setVar(var);
+        if(declaracao == "var" && declaradaAntes){
+                declaradaAntes = 0;
+                return "";
+        }
         return var + DECLARACAO;
 }
 
@@ -356,6 +363,7 @@ void setVar(string var){
         }else{
                 for (it = var_declaradas.begin(); it != var_declaradas.end(); ++it){
                         if(var == it->first & !escopo_local && declaracao != "var") erro("a variável '" + var + "' já foi declarada na linha " + to_string(it->second) + ".");
+                        if(var == it->first & !escopo_local && declaracao == "var") declaradaAntes = 1;
                 }
                 var_declaradas[var] = linhaAtual;
         }        
@@ -430,7 +438,7 @@ void mostrar(string valor){
                 continue;       
         }
         
-        if(valor[pc] == ' ' && !palavra) {
+        if(valor[pc] == ' ' && !palavra && tk != "println" && tk != "println #") {
                 tk = printToken(pc_nolabel, tk);
                 pc_nolabel++;
                 continue;

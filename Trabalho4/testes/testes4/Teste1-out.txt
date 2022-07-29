@@ -1,6 +1,1 @@
-=== Console ===
-Hello, world!
-=== Vars ===
-|{ log: { &funcao: ##; }; r: undefined; undefined: undefined; }|
-=== Pilha ===
-
+log & log {} = '&funcao' 20 [=] ^ r & r 'Hello, world!' 1 log @ $ = ^ . msg & msg arguments @ 0 [@] = ^ msg @ println # undefined ^ undefined @ '&retorno' @ ~
