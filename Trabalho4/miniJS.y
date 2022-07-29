@@ -112,9 +112,9 @@ Atribuicao_ID   : '=' Atribuicao_ID2      {$$.valor = " " + $2.valor;}
 
 Conta_Simples :   '-' Termo Conta_Simples               {$$.valor = $2.valor + "- " + $3.valor;} 
               |   '+' Termo Conta_Simples               {$$.valor = $2.valor + "+ " + $3.valor;} 
-              |   '>' Termo Conta_Simples               {$$.valor = $2.valor + $3.valor + ">";}
-              |   '<' Termo Conta_Simples               {$$.valor = $2.valor + $3.valor + "<";}
-              |   _IG Termo Conta_Simples               {$$.valor = $2.valor + $3.valor + "==";}
+              |   '>' Termo Conta_Simples               {$$.valor = $2.valor + $3.valor + "> ";}
+              |   '<' Termo Conta_Simples               {$$.valor = $2.valor + $3.valor + "< ";}
+              |   _IG Termo Conta_Simples               {$$.valor = $2.valor + $3.valor + "== ";}
               |                                         {$$.valor = "";}
               ;
 
@@ -166,7 +166,7 @@ Array   :       _ID  '[' Conta ']'                 {$$.valor = acessar_objeto($1
         ;
 
 Campo_Objeto    :  Array                             {$$.valor = $1.valor;}
-                |  _ID                               {$$.valor = $1.valor;}
+                |  _ID                               {$$.valor = $1.valor + " ";}
                 ;
 
 Continuacao_Objeto      :   Campo_Objeto  Continuacao_Objeto          {$$.valor = $1.valor + $2.valor;}
@@ -177,7 +177,7 @@ Continuacao_Objeto      :   Campo_Objeto  Continuacao_Objeto          {$$.valor 
 
 Objeto  :   _ID  '.' Continuacao_Objeto                        {$$.valor = acessar_campo($1.valor, $3.valor);}
         |   '(' _ID  ')' '.' Continuacao_Objeto                {$$.valor = acessar_campo($2.valor, $5.valor);}
-        |   Array                                              {$$.valor = $1.valor + " ";}
+        |   Array                                              {$$.valor = $1.valor;}
         |   '(' Objeto ')' Dimensoes                           {$$.valor = $2.valor + $4.valor;}
         ;
 
@@ -199,9 +199,9 @@ Membro  :   Membro_Simples                        {$$.valor = $1.valor;}
         |   Casos_ID                              {$$.valor = $1.valor; $$.retorno=$1.retorno;}
         |   Funcao                                {$$.valor = $1.valor;}
         |   '+'    Conta                          {$$.valor = $2.valor;}
-        |   '-'    Termo                          {$$.valor = "0 " + $2.valor + " -";}  
+        |   '-'    Termo                          {$$.valor = "0 " + $2.valor + "- ";}  
         |   '('    Conta ')' Membro               {$$.valor = $2.valor;}
-        |   _BOOLEAN                              {$$.valor = $1.valor;}
+        |   _BOOLEAN                              {$$.valor = $1.valor + " ";}
         ;
 
 Termo :   Membro  Conta_Complexa  {$$.valor = $1.valor + $2.valor;$$.retorno=$1.retorno;}
@@ -227,12 +227,11 @@ Retorno : _RETURN Conta {$$.valor = $2.valor + acessar_variavel("'&retorno'") + 
         ;
 
 Funcao  : _FUNCTION _ID {funcao = $2.valor; escopo_local = true;} '(' Parametros ')' Bloco_Funcao {$$.valor = declara_funcao($2.valor, $5.valor, $7.valor);}
-        | _PRINT  Argumentos                      {$$.valor = $2.valor + " print # ";}
         | '(' Argumentos ')'                      {$$.valor = $2.valor + to_string($2.parametros) + " ";}
         ;
 
 Jump_IF    : Expressao ';' SENAO           {count_label++;$$.valor = $3.valor + jumpComandos(LABEL_ENDIF, LABEL_IF) + $1.valor + enderecoResolvido(LABEL_ENDIF) + " ";}
-           | Bloco SENAO                   {count_label++;$$.valor = $2.valor + " " + jumpComandos(LABEL_ENDIF, LABEL_IF) + $1.valor + enderecoResolvido(LABEL_ENDIF) + " ";}
+           | Bloco SENAO                   {count_label++;$$.valor = $2.valor + jumpComandos(LABEL_ENDIF, LABEL_IF) + $1.valor + enderecoResolvido(LABEL_ENDIF) + " ";}
            ;
 
 Jump_While      : Expressao ';'            {count_label++;$$.valor = jumpComandos(LABEL_ENDWHILE, LABEL_CORPO_WHILE) + $1.valor + " " + jumpComandos(LABEL_WHILE, LABEL_ENDWHILE);}
@@ -248,9 +247,9 @@ SENAO   :  _ELSE Continuacao  {$$.valor = $2.valor;}
         |                     {$$.valor = "";}
         ;
 
-Comando :  _IF   '(' Expressao ')'  Jump_IF                              {$$.valor = $3.valor + " " + enderecoPraFrente(LABEL_IF) + " ? " + $5.valor;}
-        |  _FOR  '(' Expressao ';'  Expressao ';' Expressao ')' Jump_For {$$.valor = $3.valor + " " + enderecoResolvido(LABEL_FOR) + " " + $5.valor + " " + enderecoPraFrente(LABEL_CORPO_FOR) + " ? " + $9.valor + " " + $7.valor + " " + enderecoPraFrente(LABEL_FOR) + " # " + enderecoResolvido(LABEL_ENDFOR);}
-        | _WHILE '(' Expressao ')'  Jump_While                           {$$.valor = enderecoResolvido(LABEL_WHILE) + " " + $3.valor + " " + enderecoPraFrente(LABEL_CORPO_WHILE) + " ? " + $5.valor;}
+Comando :  _IF   '(' Expressao ')'  Jump_IF                              {$$.valor = $3.valor + enderecoPraFrente(LABEL_IF) + " ?" + $5.valor;}
+        |  _FOR  '(' Expressao ';'  Expressao ';' Expressao ')' Jump_For {$$.valor = $3.valor + " " + enderecoResolvido(LABEL_FOR) + " " + $5.valor + " " + enderecoPraFrente(LABEL_CORPO_FOR) + " ?" + $9.valor + " " + $7.valor + " " + enderecoPraFrente(LABEL_FOR) + " # " + enderecoResolvido(LABEL_ENDFOR);}
+        | _WHILE '(' Expressao ')'  Jump_While                           {$$.valor = enderecoResolvido(LABEL_WHILE) + " " + $3.valor + " " + enderecoPraFrente(LABEL_CORPO_WHILE) + " ?" + $5.valor;}
         ;
 
 Retorno_Comandos : _RETURN Conta {$$.valor = $2.valor + acessar_variavel("'&retorno'") + "~ ";}
@@ -307,7 +306,7 @@ string acessar_variavel(string nome_var){
 
 string acessar_campo(string nome_objeto, string campo){
         campo = " " + campo;
-        return nome_objeto + GET_VALUE + campo + " ";
+        return nome_objeto + GET_VALUE + campo;
 }
 
 
